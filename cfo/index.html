@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CFO Finance Dashboard – A Leading Saudi Industrial Conglomerate</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#0f1117;--surface:#171b26;--surface2:#1e2436;--surface3:#252d42;
+    --border:#2a3350;--accent:#00d4aa;--accent2:#3b82f6;--accent3:#f59e0b;
+    --accent4:#ef4444;--accent5:#8b5cf6;
+    --text:#e8ecf4;--text2:#8892a4;--text3:#5a6478;
+    --green:#10b981;--red:#ef4444;--yellow:#f59e0b;
+  }
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;min-height:100vh}
+  .header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+  .logo{display:flex;align-items:center;gap:12px}
+  .logo-mark{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#000}
+  .logo-text{font-size:15px;font-weight:600;letter-spacing:.3px}
+  .logo-sub{font-size:11px;color:var(--text2);margin-top:1px}
+  .header-right{display:flex;align-items:center;gap:16px}
+  .period-select{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:6px;font-size:12px;font-family:inherit}
+  .badge{background:var(--accent);color:#000;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600}
+  .main{padding:20px 24px;display:grid;gap:16px}
+  .kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+  .kpi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;position:relative;overflow:hidden}
+  .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+  .kpi.green::before{background:var(--green)}
+  .kpi.red::before{background:var(--red)}
+  .kpi.blue::before{background:var(--accent2)}
+  .kpi.yellow::before{background:var(--yellow)}
+  .kpi.teal::before{background:var(--accent)}
+  .kpi.purple::before{background:var(--accent5)}
+  .kpi-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+  .kpi-value{font-size:22px;font-weight:700;font-family:'IBM Plex Mono',monospace;letter-spacing:-1px}
+  .kpi-sub{display:flex;align-items:center;gap:4px;margin-top:6px;font-size:11px}
+  .up{color:var(--green)}.down{color:var(--red)}.neutral{color:var(--text2)}
+  .row2{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  .row4{display:grid;grid-template-columns:3fr 2fr;gap:16px}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px}
+  .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .card-title{font-size:13px;font-weight:600;letter-spacing:.2px}
+  .card-sub{font-size:11px;color:var(--text2)}
+  .chart-wrap{position:relative}
+  table{width:100%;border-collapse:collapse}
+  th{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);font-weight:500;padding:8px 10px;text-align:left;border-bottom:1px solid var(--border)}
+  td{padding:9px 10px;border-bottom:1px solid var(--border);font-size:12px;font-family:'IBM Plex Mono',monospace}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:var(--surface2)}
+  .pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;font-family:'IBM Plex Sans',sans-serif}
+  .pill-green{background:rgba(16,185,129,.15);color:var(--green)}
+  .pill-red{background:rgba(239,68,68,.15);color:var(--red)}
+  .pill-yellow{background:rgba(245,158,11,.15);color:var(--yellow)}
+  .pill-blue{background:rgba(59,130,246,.15);color:var(--accent2)}
+  .progress-bar{height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;margin-top:4px}
+  .progress-fill{height:100%;border-radius:3px;transition:width .6s ease}
+  .waterfall-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border)}
+  .waterfall-label{width:140px;font-size:11px;color:var(--text2)}
+  .waterfall-bar-wrap{flex:1;position:relative;height:20px}
+  .waterfall-bar{height:100%;border-radius:3px;position:absolute}
+  .waterfall-val{width:80px;text-align:right;font-size:11px;font-family:'IBM Plex Mono',monospace}
+  .gauge-wrap{display:flex;justify-content:space-around;padding:10px 0}
+  .gauge{text-align:center}
+  .gauge-circle{width:80px;height:80px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;font-family:'IBM Plex Mono',monospace}
+  .gauge-label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+  .tabs{display:flex;gap:2px;background:var(--surface2);padding:3px;border-radius:7px;margin-bottom:14px}
+  .tab{padding:5px 12px;border-radius:5px;font-size:11px;cursor:pointer;color:var(--text2)}
+  .tab.active{background:var(--surface3);color:var(--text);font-weight:500}
+  .divider{height:1px;background:var(--border);margin:12px 0}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .sparkline-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)}
+  .sparkline-row:last-child{border-bottom:none}
+  .entity-name{font-size:12px;font-weight:500}
+  .entity-val{font-size:12px;font-family:'IBM Plex Mono',monospace}
+  .footer{background:var(--surface);border-top:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;font-size:10px;color:var(--text3)}
+
+  /* PAGE NAVIGATION */
+  .page-nav{display:flex;background:var(--surface);border-bottom:2px solid var(--border);padding:0 24px;gap:0}
+  .page-btn{padding:12px 20px;font-size:12px;font-weight:500;cursor:pointer;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;letter-spacing:.3px}
+  .page-btn:hover{color:var(--text);background:var(--surface2)}
+  .page-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+  .page-content{display:none}
+  .page-content.active{display:block}
+
+  /* AR RISK PAGE */
+  .ar-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+  .ar-kpi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px}
+  .ar-kpi-label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+  .ar-kpi-value{font-size:20px;font-weight:700;font-family:'IBM Plex Mono',monospace}
+  .ar-kpi-sub{font-size:11px;color:var(--text2);margin-top:4px}
+  .ar-kpi.danger .ar-kpi-value{color:var(--red)}
+  .ar-kpi.warn .ar-kpi-value{color:var(--yellow)}
+  .ar-kpi.ok .ar-kpi-value{color:var(--green)}
+  .ar-kpi.info .ar-kpi-value{color:var(--accent2)}
+  .ar-grid{display:grid;grid-template-columns:1fr 2fr 1fr;gap:14px;margin-bottom:14px}
+  .ar-bottom{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .insight-banner{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);border-left:3px solid var(--yellow);border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:12px;line-height:1.6;color:var(--text)}
+  .insight-banner strong{color:var(--yellow)}
+  .customer-table th{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);padding:7px 8px;border-bottom:1px solid var(--border)}
+  .customer-table td{padding:7px 8px;font-size:11px;border-bottom:1px solid rgba(42,51,80,.5);cursor:pointer;transition:background .15s}
+  .customer-table tr:hover td{background:var(--surface2)}
+  .customer-table tr.selected td{background:rgba(0,212,170,.08)}
+  .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
+  .dot-green{background:var(--green)}.dot-yellow{background:var(--yellow)}.dot-red{background:var(--red)}
+  .whatif-box{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:12px}
+  .whatif-label{font-size:11px;color:var(--text2);margin-bottom:8px}
+  .whatif-slider{width:100%;accent-color:var(--accent);margin:8px 0}
+  .whatif-result{font-size:16px;font-weight:700;color:var(--accent);font-family:'IBM Plex Mono',monospace}
+
+  /* PROFIT EROSION PAGE */
+  .pe-problem{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.25);border-left:3px solid var(--red);border-radius:8px;padding:16px 20px;margin-bottom:16px}
+  .pe-problem-title{font-size:13px;font-weight:600;color:var(--red);margin-bottom:6px}
+  .pe-problem-text{font-size:13px;line-height:1.7;color:var(--text)}
+  .pe-grid1{display:grid;grid-template-columns:2fr 1fr 1fr;gap:14px;margin-bottom:14px}
+  .pe-grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+  .pe-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+  .rec-box{background:var(--surface2);border-radius:8px;padding:14px}
+  .rec-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;color:var(--text2)}
+  .rec-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;font-size:12px;line-height:1.5}
+  .rec-badge{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;white-space:nowrap;flex-shrink:0;margin-top:1px}
+  .rec-badge.short{background:rgba(239,68,68,.15);color:var(--red)}
+  .rec-badge.medium{background:rgba(245,158,11,.15);color:var(--yellow)}
+  .rec-badge.target{background:rgba(0,212,170,.15);color:var(--accent)}
+  .scenario-box{background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);border-radius:8px;padding:14px}
+  .scenario-title{font-size:12px;font-weight:600;color:var(--accent2);margin-bottom:12px}
+  .scenario-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .scenario-control{margin-bottom:10px}
+  .scenario-control label{font-size:11px;color:var(--text2);display:block;margin-bottom:4px}
+  .scenario-control input{width:100%;accent-color:var(--accent2)}
+  .scenario-output{background:var(--surface);border-radius:6px;padding:12px;text-align:center}
+  .scenario-output-val{font-size:22px;font-weight:700;font-family:'IBM Plex Mono',monospace;color:var(--accent2)}
+  .scenario-output-label{font-size:11px;color:var(--text2);margin-top:4px}
+
+  /* AI ASSISTANT */
+  .ai-btn{position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,var(--accent2),var(--accent5));color:white;border:none;border-radius:50px;padding:12px 20px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 4px 20px rgba(59,130,246,.4);z-index:1000;display:flex;align-items:center;gap:8px;transition:transform .2s}
+  .ai-btn:hover{transform:scale(1.05)}
+  .ai-panel{position:fixed;bottom:80px;right:24px;width:360px;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:0 8px 40px rgba(0,0,0,.5);z-index:1000;display:none;flex-direction:column;max-height:500px}
+  .ai-panel.open{display:flex}
+  .ai-panel-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+  .ai-panel-title{font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px}
+  .ai-close{background:none;border:none;color:var(--text2);cursor:pointer;font-size:16px}
+  .ai-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;min-height:200px}
+  .ai-msg{padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.6;max-width:90%}
+  .ai-msg.assistant{background:var(--surface2);color:var(--text);align-self:flex-start}
+  .ai-msg.user{background:rgba(59,130,246,.2);color:var(--text);align-self:flex-end}
+  .ai-input-row{padding:12px;border-top:1px solid var(--border);display:flex;gap:8px}
+  .ai-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text);font-family:inherit;font-size:12px;outline:none}
+  .ai-send{background:var(--accent2);border:none;border-radius:6px;padding:8px 14px;color:white;font-family:inherit;font-size:12px;cursor:pointer;font-weight:600}
+  .ai-suggestion{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:11px;color:var(--text2);cursor:pointer;margin-top:4px;display:inline-block}
+  .ai-suggestion:hover{border-color:var(--accent2);color:var(--accent2)}
+  .ai-thinking{color:var(--text2);font-style:italic;font-size:12px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-mark">ARI</div>
+    <div>
+      <div class="logo-text">A Leading Saudi Industrial Conglomerate</div>
+      <div class="logo-sub">CFO Executive Finance Dashboard</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <select class="period-select">
+      <option>FY 2024 – Full Year</option>
+      <option>Q4 2024</option>
+      <option>Q3 2024</option>
+      <option>YTD 2025</option>
+    </select>
+    <div style="font-size:11px;color:var(--text2)">Last updated: 28 Apr 2025  08:14 AST</div>
+    <div class="badge">LIVE</div>
+  </div>
+</div>
+
+<div class="page-nav">
+  <button class="page-btn active" onclick="showPage('main')">📊 CFO Overview</button>
+  <button class="page-btn" onclick="showPage('ar')">⚠️ Receivables Risk Analysis</button>
+  <button class="page-btn" onclick="showPage('pe')">📉 Profit Erosion Analysis</button>
+</div>
+
+<div id="page-main" class="page-content active">
+<div class="main">
+
+  <!-- KPI ROW -->
+  <div class="kpi-row">
+    <div class="kpi teal">
+      <div class="kpi-label">Total Revenue</div>
+      <div class="kpi-value">SAR 2.84B</div>
+      <div class="kpi-sub"><span class="up">▲ 12.4%</span><span class="neutral">vs FY2023</span></div>
+      <div class="progress-bar" style="margin-top:8px"><div class="progress-fill" style="width:94%;background:var(--accent)"></div></div>
+      <div style="font-size:10px;color:var(--text2);margin-top:3px">94% of SAR 3.02B target</div>
+    </div>
+    <div class="kpi green">
+      <div class="kpi-label">Gross Profit</div>
+      <div class="kpi-value">SAR 712M</div>
+      <div class="kpi-sub"><span class="up">▲ 8.1%</span><span class="neutral">Margin: 25.1%</span></div>
+      <div class="progress-bar" style="margin-top:8px"><div class="progress-fill" style="width:25%;background:var(--green)"></div></div>
+      <div style="font-size:10px;color:var(--text2);margin-top:3px">Target margin: 27%</div>
+    </div>
+    <div class="kpi blue">
+      <div class="kpi-label">Net Profit</div>
+      <div class="kpi-value">SAR 318M</div>
+      <div class="kpi-sub"><span class="up">▲ 5.3%</span><span class="neutral">Margin: 11.2%</span></div>
+      <div class="progress-bar" style="margin-top:8px"><div class="progress-fill" style="width:79%;background:var(--accent2)"></div></div>
+      <div style="font-size:10px;color:var(--text2);margin-top:3px">79% of SAR 400M target</div>
+    </div>
+    <div class="kpi yellow">
+      <div class="kpi-label">Operating Cash Flow</div>
+      <div class="kpi-value">SAR 425M</div>
+      <div class="kpi-sub"><span class="up">▲ 18.2%</span><span class="neutral">vs FY2023</span></div>
+      <div class="progress-bar" style="margin-top:8px"><div class="progress-fill" style="width:85%;background:var(--yellow)"></div></div>
+      <div style="font-size:10px;color:var(--text2);margin-top:3px">85% of SAR 500M target</div>
+    </div>
+    <div class="kpi red">
+      <div class="kpi-label">Total Liabilities</div>
+      <div class="kpi-value">SAR 1.12B</div>
+      <div class="kpi-sub"><span class="down">▲ 3.2%</span><span class="neutral">D/E Ratio: 0.89</span></div>
+      <div class="progress-bar" style="margin-top:8px"><div class="progress-fill" style="width:68%;background:var(--red)"></div></div>
+      <div style="font-size:10px;color:var(--text2);margin-top:3px">Within covenant limit</div>
+    </div>
+    <div class="kpi purple">
+      <div class="kpi-label">EBITDA</div>
+      <div class="kpi-value">SAR 498M</div>
+      <div class="kpi-sub"><span class="up">▲ 9.7%</span><span class="neutral">Margin: 17.5%</span></div>
+      <div class="progress-bar" style="margin-top:8px"><div class="progress-fill" style="width:88%;background:var(--accent5)"></div></div>
+      <div style="font-size:10px;color:var(--text2);margin-top:3px">88% of SAR 565M target</div>
+    </div>
+  </div>
+
+  <!-- ROW 2: Revenue trend + P&L waterfall -->
+  <div class="row2">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Monthly Revenue vs Target vs Prior Year</div>
+          <div class="card-sub">SAR Millions — FY 2024</div>
+        </div>
+        <div class="tabs">
+          <div class="tab active">Revenue</div>
+          <div class="tab">Gross Profit</div>
+          <div class="tab">EBITDA</div>
+        </div>
+      </div>
+      <div class="chart-wrap" style="height:220px">
+        <canvas id="revenueChart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">P&L Waterfall — FY 2024</div>
+        <div class="card-sub">SAR Millions</div>
+      </div>
+      <div style="padding-top:4px">
+        <div class="waterfall-row">
+          <div class="waterfall-label">Gross Revenue</div>
+          <div class="waterfall-bar-wrap"><div class="waterfall-bar" style="left:0;width:100%;background:var(--accent);opacity:.8"></div></div>
+          <div class="waterfall-val" style="color:var(--accent)">2,840</div>
+        </div>
+        <div class="waterfall-row">
+          <div class="waterfall-label">Cost of Revenue</div>
+          <div class="waterfall-bar-wrap"><div class="waterfall-bar" style="left:0;width:75%;background:var(--red);opacity:.7"></div></div>
+          <div class="waterfall-val" style="color:var(--red)">(2,128)</div>
+        </div>
+        <div class="waterfall-row">
+          <div class="waterfall-label">Gross Profit</div>
+          <div class="waterfall-bar-wrap"><div class="waterfall-bar" style="left:0;width:25%;background:var(--green);opacity:.9"></div></div>
+          <div class="waterfall-val" style="color:var(--green)">712</div>
+        </div>
+        <div class="waterfall-row">
+          <div class="waterfall-label">Operating Expenses</div>
+          <div class="waterfall-bar-wrap"><div class="waterfall-bar" style="left:0;width:15%;background:var(--yellow);opacity:.7"></div></div>
+          <div class="waterfall-val" style="color:var(--yellow)">(214)</div>
+        </div>
+        <div class="waterfall-row">
+          <div class="waterfall-label">EBIT</div>
+          <div class="waterfall-bar-wrap"><div class="waterfall-bar" style="left:0;width:18%;background:var(--accent2);opacity:.9"></div></div>
+          <div class="waterfall-val" style="color:var(--accent2)">498</div>
+        </div>
+        <div class="waterfall-row">
+          <div class="waterfall-label">Finance Costs</div>
+          <div class="waterfall-bar-wrap"><div class="waterfall-bar" style="left:0;width:6%;background:var(--red);opacity:.6"></div></div>
+          <div class="waterfall-val" style="color:var(--red)">(112)</div>
+        </div>
+        <div class="waterfall-row">
+          <div class="waterfall-label">Zakat & Tax</div>
+          <div class="waterfall-bar-wrap"><div class="waterfall-bar" style="left:0;width:2%;background:var(--red);opacity:.5"></div></div>
+          <div class="waterfall-val" style="color:var(--red)">(68)</div>
+        </div>
+        <div class="waterfall-row" style="border-bottom:none">
+          <div class="waterfall-label" style="font-weight:600;color:var(--text)">Net Profit</div>
+          <div class="waterfall-bar-wrap"><div class="waterfall-bar" style="left:0;width:11%;background:var(--accent5)"></div></div>
+          <div class="waterfall-val" style="color:var(--accent5);font-weight:700">318</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 3: Cash flow + AR Aging + Expense breakdown -->
+  <div class="row3">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Cash Flow Statement — FY 2024</div>
+        <div class="card-sub">SAR Millions</div>
+      </div>
+      <div class="chart-wrap" style="height:180px">
+        <canvas id="cashflowChart"></canvas>
+      </div>
+      <div class="divider"></div>
+      <div class="two-col" style="gap:12px">
+        <div style="text-align:center;padding:8px;background:var(--surface2);border-radius:8px">
+          <div style="font-size:10px;color:var(--text2);margin-bottom:4px">Free Cash Flow</div>
+          <div style="font-size:18px;font-weight:700;color:var(--accent);font-family:'IBM Plex Mono',monospace">SAR 287M</div>
+        </div>
+        <div style="text-align:center;padding:8px;background:var(--surface2);border-radius:8px">
+          <div style="font-size:10px;color:var(--text2);margin-bottom:4px">Cash Conversion</div>
+          <div style="font-size:18px;font-weight:700;color:var(--green);font-family:'IBM Plex Mono',monospace">91.4%</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Accounts Receivable Aging</div>
+        <div class="card-sub">Total Outstanding: SAR 324M</div>
+      </div>
+      <div class="chart-wrap" style="height:160px">
+        <canvas id="arChart"></canvas>
+      </div>
+      <div class="divider"></div>
+      <table>
+        <tr><th>Bucket</th><th>SAR M</th><th>%</th><th>Status</th></tr>
+        <tr><td>0–30 days</td><td>142.4</td><td>44.0%</td><td><span class="pill pill-green">Current</span></td></tr>
+        <tr><td>31–60 days</td><td>88.6</td><td>27.3%</td><td><span class="pill pill-blue">Monitor</span></td></tr>
+        <tr><td>61–90 days</td><td>54.2</td><td>16.7%</td><td><span class="pill pill-yellow">At Risk</span></td></tr>
+        <tr><td>90+ days</td><td>38.8</td><td>12.0%</td><td><span class="pill pill-red">Overdue</span></td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Operating Expense Breakdown</div>
+        <div class="card-sub">SAR 214M Total Opex</div>
+      </div>
+      <div class="chart-wrap" style="height:160px">
+        <canvas id="opexChart"></canvas>
+      </div>
+      <div class="divider"></div>
+      <div>
+        <div class="sparkline-row"><div class="entity-name">Salaries and Benefits</div><div style="flex:1;margin:0 12px"><div class="progress-bar"><div class="progress-fill" style="width:42%;background:var(--accent2)"></div></div></div><div class="entity-val">SAR 89.9M</div></div>
+        <div class="sparkline-row"><div class="entity-name">Logistics and Delivery</div><div style="flex:1;margin:0 12px"><div class="progress-bar"><div class="progress-fill" style="width:22%;background:var(--accent)"></div></div></div><div class="entity-val">SAR 47.1M</div></div>
+        <div class="sparkline-row"><div class="entity-name">Facilities and Rent</div><div style="flex:1;margin:0 12px"><div class="progress-bar"><div class="progress-fill" style="width:14%;background:var(--yellow)"></div></div></div><div class="entity-val">SAR 29.9M</div></div>
+        <div class="sparkline-row"><div class="entity-name">IT and Technology</div><div style="flex:1;margin:0 12px"><div class="progress-bar"><div class="progress-fill" style="width:10%;background:var(--accent5)"></div></div></div><div class="entity-val">SAR 21.4M</div></div>
+        <div class="sparkline-row"><div class="entity-name">Marketing</div><div style="flex:1;margin:0 12px"><div class="progress-bar"><div class="progress-fill" style="width:7%;background:var(--green)"></div></div></div><div class="entity-val">SAR 14.9M</div></div>
+        <div class="sparkline-row"><div class="entity-name">Other</div><div style="flex:1;margin:0 12px"><div class="progress-bar"><div class="progress-fill" style="width:5%;background:var(--text3)"></div></div></div><div class="entity-val">SAR 10.8M</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 4: Division performance + Ratios -->
+  <div class="row4">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Business Unit Performance — FY 2024</div>
+        <div class="card-sub">Revenue, Gross Profit, Net Profit by Division (SAR Millions)</div>
+      </div>
+      <div class="chart-wrap" style="height:200px">
+        <canvas id="divisionChart"></canvas>
+      </div>
+      <div style="margin-top:14px">
+        <table>
+          <tr><th>Division</th><th>Revenue</th><th>GP</th><th>GP%</th><th>NP</th><th>NP%</th><th>vs Budget</th></tr>
+          <tr><td>Scaffolding &amp; Access</td><td>842.6</td><td>218.1</td><td>25.9%</td><td>96.4</td><td>11.4%</td><td><span class="pill pill-green">+4.2%</span></td></tr>
+          <tr><td>Industrial Chemicals</td><td>614.8</td><td>147.6</td><td>24.0%</td><td>71.2</td><td>11.6%</td><td><span class="pill pill-green">+2.1%</span></td></tr>
+          <tr><td>Logistics Services</td><td>524.2</td><td>136.3</td><td>26.0%</td><td>58.8</td><td>11.2%</td><td><span class="pill pill-yellow">-1.4%</span></td></tr>
+          <tr><td>Trading and Distribution</td><td>498.4</td><td>117.2</td><td>23.5%</td><td>52.4</td><td>10.5%</td><td><span class="pill pill-red">-3.8%</span></td></tr>
+          <tr><td>Real Estate and Facilities</td><td>360.0</td><td>93.0</td><td>25.8%</td><td>39.2</td><td>10.9%</td><td><span class="pill pill-green">+1.8%</span></td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Financial Ratios and Health</div>
+        <div class="card-sub">FY 2024 vs Benchmarks</div>
+      </div>
+      <div class="gauge-wrap">
+        <div class="gauge">
+          <div class="gauge-circle" style="background:conic-gradient(var(--green) 0% 68%,var(--surface3) 68%);padding:10px">
+            <div style="background:var(--surface);border-radius:50%;width:56px;height:56px;display:flex;align-items:center;justify-content:center;flex-direction:column">
+              <div style="font-size:14px;font-weight:700">2.4x</div>
+              <div style="font-size:8px;color:var(--text2)">Current</div>
+            </div>
+          </div>
+          <div class="gauge-label">Current Ratio</div>
+          <div style="font-size:10px;color:var(--green)">Healthy (&gt;2.0)</div>
+        </div>
+        <div class="gauge">
+          <div class="gauge-circle" style="background:conic-gradient(var(--accent2) 0% 55%,var(--surface3) 55%);padding:10px">
+            <div style="background:var(--surface);border-radius:50%;width:56px;height:56px;display:flex;align-items:center;justify-content:center;flex-direction:column">
+              <div style="font-size:14px;font-weight:700">0.89</div>
+              <div style="font-size:8px;color:var(--text2)">D/E</div>
+            </div>
+          </div>
+          <div class="gauge-label">Debt/Equity</div>
+          <div style="font-size:10px;color:var(--accent2)">Moderate</div>
+        </div>
+        <div class="gauge">
+          <div class="gauge-circle" style="background:conic-gradient(var(--accent) 0% 80%,var(--surface3) 80%);padding:10px">
+            <div style="background:var(--surface);border-radius:50%;width:56px;height:56px;display:flex;align-items:center;justify-content:center;flex-direction:column">
+              <div style="font-size:14px;font-weight:700">17.5%</div>
+              <div style="font-size:8px;color:var(--text2)">ROE</div>
+            </div>
+          </div>
+          <div class="gauge-label">Return on Equity</div>
+          <div style="font-size:10px;color:var(--accent)">Above benchmark</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <table>
+        <tr><th>Metric</th><th>Actual</th><th>Target</th><th>Status</th></tr>
+        <tr><td>DSO (Days Sales Outstdg)</td><td>42 days</td><td>35 days</td><td><span class="pill pill-yellow">Review</span></td></tr>
+        <tr><td>DPO (Days Payable Outstdg)</td><td>38 days</td><td>45 days</td><td><span class="pill pill-blue">Monitor</span></td></tr>
+        <tr><td>Inventory Turnover</td><td>8.2x</td><td>8.0x</td><td><span class="pill pill-green">On Track</span></td></tr>
+        <tr><td>Interest Coverage Ratio</td><td>4.4x</td><td>4.0x</td><td><span class="pill pill-green">On Track</span></td></tr>
+        <tr><td>Working Capital</td><td>SAR 312M</td><td>SAR 280M</td><td><span class="pill pill-green">On Track</span></td></tr>
+        <tr><td>Capex / Revenue</td><td>4.8%</td><td>5.0%</td><td><span class="pill pill-green">On Track</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <div>A Leading Saudi Industrial Conglomerate — Confidential CFO Dashboard | Prepared by: Finance &amp; Strategy Team</div>
+  <div>Data Source: SAP S/4HANA ERP | Fiscal Year: 1 Jan – 31 Dec 2024 | Currency: Saudi Riyal (SAR)</div>
+</div>
+
+<script>
+const C={accent:'#00d4aa',accent2:'#3b82f6',accent3:'#f59e0b',accent4:'#ef4444',accent5:'#8b5cf6',green:'#10b981',red:'#ef4444',surface3:'#252d42',text2:'#8892a4'};
+Chart.defaults.color=C.text2;Chart.defaults.borderColor='#2a3350';Chart.defaults.font.family='IBM Plex Sans';
+
+// Revenue Chart
+new Chart(document.getElementById('revenueChart'),{
+  type:'bar',
+  data:{
+    labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    datasets:[
+      {label:'Actual Revenue',data:[198,212,224,238,245,252,248,241,256,268,242,216],backgroundColor:'rgba(0,212,170,.7)',borderColor:C.accent,borderWidth:1,borderRadius:4,order:2},
+      {label:'Target',data:[210,215,225,240,245,255,255,245,255,270,250,225],type:'line',borderColor:C.accent3,borderWidth:2,borderDash:[4,4],pointRadius:3,pointBackgroundColor:C.accent3,fill:false,order:1},
+      {label:'Prior Year',data:[172,185,198,208,216,224,218,212,228,240,218,196],type:'line',borderColor:C.text2,borderWidth:1.5,borderDash:[2,4],pointRadius:2,fill:false,order:1}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:12,padding:16,font:{size:11}}}},scales:{x:{grid:{display:false}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{callback:v=>'SAR '+v+'M'}}}}
+});
+
+// Cashflow Chart
+new Chart(document.getElementById('cashflowChart'),{
+  type:'bar',
+  data:{
+    labels:['Q1','Q2','Q3','Q4'],
+    datasets:[
+      {label:'Operating',data:[98,112,108,107],backgroundColor:'rgba(0,212,170,.7)',borderRadius:4},
+      {label:'Investing',data:[-42,-38,-44,-14],backgroundColor:'rgba(239,68,68,.6)',borderRadius:4},
+      {label:'Financing',data:[-18,-24,-16,-28],backgroundColor:'rgba(245,158,11,.6)',borderRadius:4}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,padding:12,font:{size:10}}}},scales:{x:{grid:{display:false},stacked:true},y:{grid:{color:'rgba(255,255,255,.04)'},stacked:true,ticks:{callback:v=>'SAR '+v+'M'}}}}
+});
+
+// AR Aging Doughnut
+new Chart(document.getElementById('arChart'),{
+  type:'doughnut',
+  data:{
+    labels:['0-30 days','31-60 days','61-90 days','90+ days'],
+    datasets:[{data:[142.4,88.6,54.2,38.8],backgroundColor:['rgba(16,185,129,.8)','rgba(59,130,246,.8)','rgba(245,158,11,.8)','rgba(239,68,68,.8)'],borderWidth:0,hoverOffset:8}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{position:'right',labels:{boxWidth:10,padding:10,font:{size:10}}}}}
+});
+
+// Opex Doughnut
+new Chart(document.getElementById('opexChart'),{
+  type:'doughnut',
+  data:{
+    labels:['Salaries','Logistics','Facilities','IT','Marketing','Other'],
+    datasets:[{data:[89.9,47.1,29.9,21.4,14.9,10.8],backgroundColor:['rgba(59,130,246,.8)','rgba(0,212,170,.8)','rgba(245,158,11,.8)','rgba(139,92,246,.8)','rgba(16,185,129,.8)','rgba(88,100,116,.8)'],borderWidth:0,hoverOffset:6}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false}}}
+});
+
+// Division Chart
+new Chart(document.getElementById('divisionChart'),{
+  type:'bar',
+  data:{
+    labels:['Scaffolding & Access','Industrial Chemicals','Logistics Services','Trading & Distribution','Real Estate'],
+    datasets:[
+      {label:'Revenue',data:[842.6,614.8,524.2,498.4,360.0],backgroundColor:'rgba(0,212,170,.6)',borderRadius:3},
+      {label:'Gross Profit',data:[218.1,147.6,136.3,117.2,93.0],backgroundColor:'rgba(59,130,246,.7)',borderRadius:3},
+      {label:'Net Profit',data:[96.4,71.2,58.8,52.4,39.2],backgroundColor:'rgba(139,92,246,.7)',borderRadius:3}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,padding:14,font:{size:11}}}},scales:{x:{grid:{display:false}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{callback:v=>'SAR '+v+'M'}}}}
+});
+</script>
+
+</div><!-- end page-main -->
+
+<!-- ===== AR RISK PAGE ===== -->
+<div id="page-ar" class="page-content">
+<div class="main">
+
+  <div class="insight-banner">
+    <strong>⚠ High Concentration Risk Detected:</strong> Top 5 customers account for 68% of total overdue receivables (SAR 26.4M of SAR 38.8M). Immediate targeted collection plan recommended. DSO at 42 days vs 35-day target — SAR 22.4M cash unlock potential if DSO normalized.
+  </div>
+
+  <div class="ar-summary">
+    <div class="ar-kpi info"><div class="ar-kpi-label">Total AR Outstanding</div><div class="ar-kpi-value">SAR 324M</div><div class="ar-kpi-sub">Across all customers</div></div>
+    <div class="ar-kpi danger"><div class="ar-kpi-label">% Overdue 90+ Days</div><div class="ar-kpi-value">12.0%</div><div class="ar-kpi-sub">SAR 38.8M at risk</div></div>
+    <div class="ar-kpi danger"><div class="ar-kpi-label">Estimated Bad Debt Risk</div><div class="ar-kpi-value">SAR 15.5M</div><div class="ar-kpi-sub">40% provision on 90+ bucket</div></div>
+    <div class="ar-kpi warn"><div class="ar-kpi-label">Days Sales Outstanding</div><div class="ar-kpi-value">42 days</div><div class="ar-kpi-sub">vs 35-day target ▲7 days</div></div>
+  </div>
+
+  <div class="ar-grid">
+    <div class="card">
+      <div class="card-header"><span class="card-title">AR Aging Distribution</span><span class="card-sub">vs Last Quarter</span></div>
+      <div class="chart-wrap" style="height:200px"><canvas id="arPieChart"></canvas></div>
+      <div style="margin-top:12px"><canvas id="arBarChart" style="height:100px"></canvas></div>
+    </div>
+
+    <div class="card" style="overflow:auto">
+      <div class="card-header"><span class="card-title">Top 20 Customers by Overdue Amount</span><span class="card-sub" style="color:var(--accent2);cursor:pointer" onclick="sortTable()">Click row to highlight ↕ Sort</span></div>
+      <table class="customer-table" id="customerTable">
+        <thead><tr>
+          <th>Customer</th><th>Total Outstanding</th><th>Current</th><th>31-60</th><th>61-90</th><th>90+</th><th>% Overdue</th><th>Credit Util.</th><th>Last Payment</th><th>Status</th>
+        </tr></thead>
+        <tbody id="customerBody"></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="card-title">Overdue Trend — 12 Months</span><span class="card-sub">% of Total AR + Forecast</span></div>
+      <div class="chart-wrap" style="height:220px"><canvas id="arTrendChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="ar-bottom">
+    <div class="card">
+      <div class="card-header"><span class="card-title">Impact on Operating Cash Flow</span><span class="card-sub">Quarterly — delayed collections effect</span></div>
+      <div class="chart-wrap" style="height:200px"><canvas id="cashImpactChart"></canvas></div>
+      <div class="whatif-box">
+        <div class="whatif-label">What-If Simulator: Reduce 90+ Overdue by <span id="sliderPct">50</span>%</div>
+        <input type="range" class="whatif-slider" id="whatifSlider" min="10" max="100" value="50" oninput="updateWhatif(this.value)">
+        <div>Potential Cash Unlock: <span class="whatif-result" id="whatifResult">SAR 19.4M</span></div>
+        <div style="font-size:11px;color:var(--text2);margin-top:4px">DSO improvement: <span id="whatifDSO">~4.7 days</span> · Bad debt reduction: <span id="whatifBadDebt">SAR 7.8M</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="card-title">Aging Trend — Quarter vs Quarter</span><span class="card-sub">Change since Q3 2024</span></div>
+      <div class="chart-wrap" style="height:240px"><canvas id="agingTrendChart"></canvas></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ===== PROFIT EROSION PAGE ===== -->
+<div id="page-pe" class="page-content">
+<div class="main">
+
+  <div class="pe-problem">
+    <div class="pe-problem-title">🔍 Problem Statement</div>
+    <div class="pe-problem-text">Revenue grew <strong>12.4% YoY to SAR 2.84B</strong> — the strongest growth in 3 years. Yet Net Profit reached only <strong>79% of the SAR 400M target</strong> (actual: SAR 318M). The gap is driven by OpEx growing faster than revenue, margin compression in two key divisions, and SAR 38.8M in overdue receivables increasing finance costs.</div>
+  </div>
+
+  <div class="pe-grid1">
+    <div class="card">
+      <div class="card-header"><span class="card-title">Revenue → Net Profit Waterfall</span><span class="card-sub">FY 2024 — SAR Millions</span></div>
+      <div class="chart-wrap" style="height:220px"><canvas id="peWaterfallChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Margin Trend</span><span class="card-sub">GP% vs NP% by Quarter</span></div>
+      <div class="chart-wrap" style="height:220px"><canvas id="marginTrendChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">OpEx vs Revenue Growth</span><span class="card-sub">YoY % change by category</span></div>
+      <div class="chart-wrap" style="height:220px"><canvas id="opexGrowthChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="pe-grid2">
+    <div class="card">
+      <div class="card-header"><span class="card-title">Division Contribution to Margin Decline</span><span class="card-sub">Impact on Group NP% FY2024 vs FY2023</span></div>
+      <div class="chart-wrap" style="height:200px"><canvas id="divMarginChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Revenue vs OpEx Correlation by Division</span><span class="card-sub">Bubble size = OpEx % of Revenue</span></div>
+      <div class="chart-wrap" style="height:200px"><canvas id="correlationChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="pe-grid3">
+    <div class="rec-box">
+      <div class="rec-title">Recommended Actions</div>
+      <div class="rec-item"><span class="rec-badge short">Short-Term</span><span>Accelerate collections on SAR 38.8M overdue — target 50% recovery in 60 days. Reduces finance costs by est. SAR 4.2M annually.</span></div>
+      <div class="rec-item"><span class="rec-badge medium">Medium-Term</span><span>Review Logistics Services cost structure — division OpEx/revenue ratio is 11.8% above group average. Vendor contract renegotiation recommended.</span></div>
+      <div class="rec-item"><span class="rec-badge medium">Medium-Term</span><span>Trading & Distribution margin at 10.5% NP — 3.8% below budget. Review pricing strategy and procurement terms.</span></div>
+      <div class="rec-item"><span class="rec-badge target">Target</span><span>Bring DSO from 42 → 35 days. Potential: SAR 22.4M cash unlock + SAR 2.8M reduction in finance costs = ~0.4% NP margin improvement.</span></div>
+    </div>
+
+    <div class="scenario-box" style="grid-column:span 2">
+      <div class="scenario-title">⚙️ Scenario Simulator — Project Net Profit Impact</div>
+      <div class="scenario-row">
+        <div>
+          <div class="scenario-control">
+            <label>Reduce Logistics OpEx by <span id="logLabel">5</span>%</label>
+            <input type="range" min="0" max="20" value="5" oninput="updateScenario()" id="logSlider">
+          </div>
+          <div class="scenario-control">
+            <label>Improve DSO by <span id="dsoLabel">7</span> days</label>
+            <input type="range" min="0" max="20" value="7" oninput="updateScenario()" id="dsoSlider">
+          </div>
+          <div class="scenario-control">
+            <label>Increase Revenue by <span id="revLabel">5</span>%</label>
+            <input type="range" min="0" max="15" value="5" oninput="updateScenario()" id="revSlider">
+          </div>
+          <div class="scenario-control">
+            <label>Reduce Salaries Growth to <span id="salLabel">3</span>%</label>
+            <input type="range" min="0" max="10" value="3" oninput="updateScenario()" id="salSlider">
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-content:start">
+          <div class="scenario-output"><div class="scenario-output-val" id="projNP">SAR 342M</div><div class="scenario-output-label">Projected Net Profit</div></div>
+          <div class="scenario-output"><div class="scenario-output-val" id="projMargin">12.1%</div><div class="scenario-output-label">Projected NP Margin</div></div>
+          <div class="scenario-output"><div class="scenario-output-val" id="projUpside" style="color:var(--green)">+SAR 24M</div><div class="scenario-output-label">vs Actual FY2024</div></div>
+          <div class="scenario-output"><div class="scenario-output-val" id="projTarget" style="color:var(--yellow)">86%</div><div class="scenario-output-label">% of SAR 400M Target</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- AI ASSISTANT BUTTON -->
+<button class="ai-btn" onclick="toggleAI()">🤖 Ask AI Analyst</button>
+<div class="ai-panel" id="aiPanel">
+  <div class="ai-panel-header">
+    <div class="ai-panel-title">🤖 <span>AI Finance Analyst</span></div>
+    <button class="ai-close" onclick="toggleAI()">✕</button>
+  </div>
+  <div class="ai-messages" id="aiMessages">
+    <div class="ai-msg assistant">Hello! I'm your AI Finance Analyst. I can answer questions about this dashboard in Arabic or English. What would you like to explore?<br><br>
+      <span class="ai-suggestion" onclick="askQ('Why is profit below target?')">Why is profit below target?</span><br>
+      <span class="ai-suggestion" onclick="askQ('Which division has the worst margin?')">Which division has worst margin?</span><br>
+      <span class="ai-suggestion" onclick="askQ('What is our biggest cash flow risk?')">Biggest cash flow risk?</span><br>
+      <span class="ai-suggestion" onclick="askQ('ما هي أكبر مخاطر التحصيل؟')">ما هي أكبر مخاطر التحصيل؟</span>
+    </div>
+  </div>
+  <div class="ai-input-row">
+    <input class="ai-input" id="aiInput" placeholder="Ask anything about the data..." onkeydown="if(event.key==='Enter')sendAI()">
+    <button class="ai-send" onclick="sendAI()">Send</button>
+  </div>
+</div>
+
+
+<script>
+// ===== PAGE NAVIGATION =====
+function showPage(id) {
+  document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.page-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ===== CUSTOMER TABLE DATA =====
+const customers = [
+  {name:'Al Mada Group',total:18.4,current:4.2,d31:3.1,d61:4.8,d90:6.3,limit:85,lastPay:'15 Mar 2024'},
+  {name:'Saudi Aramco Contractors',total:15.2,current:6.1,d31:2.4,d61:3.2,d90:3.5,limit:62,lastPay:'02 Apr 2024'},
+  {name:'SABIC Industrial Supply',total:12.8,current:5.5,d31:3.8,d61:1.9,d90:1.6,limit:45,lastPay:'28 Mar 2024'},
+  {name:'Tatweer Building Co.',total:11.6,current:2.1,d31:1.4,d61:3.8,d90:4.3,limit:91,lastPay:'10 Feb 2024'},
+  {name:'Al Rajhi Cement',total:10.9,current:4.8,d31:2.2,d61:2.1,d90:1.8,limit:55,lastPay:'18 Apr 2024'},
+  {name:'Naqel Express',total:9.4,current:3.6,d31:2.8,d61:1.4,d90:1.6,limit:48,lastPay:'22 Apr 2024'},
+  {name:'Al Othaim Markets',total:8.7,current:4.1,d31:1.9,d61:1.3,d90:1.4,limit:38,lastPay:'05 Apr 2024'},
+  {name:'Saudi Steel Industries',total:8.2,current:2.8,d31:1.6,d61:2.4,d90:1.4,limit:72,lastPay:'14 Mar 2024'},
+  {name:'Zamil Industrial',total:7.9,current:3.2,d31:2.1,d61:1.2,d90:1.4,limit:42,lastPay:'30 Mar 2024'},
+  {name:'Red Sea Gateway',total:7.4,current:3.8,d31:1.4,d61:0.9,d90:1.3,limit:35,lastPay:'08 Apr 2024'},
+  {name:'Al Bawani Contracting',total:6.8,current:1.9,d31:1.2,d61:1.8,d90:1.9,limit:88,lastPay:'20 Jan 2024'},
+  {name:'NEOM Procurement',total:6.4,current:3.1,d31:1.6,d61:0.8,d90:0.9,limit:28,lastPay:'12 Apr 2024'},
+  {name:'Saudi Readymix',total:5.9,current:2.4,d31:1.4,d61:0.9,d90:1.2,limit:52,lastPay:'25 Mar 2024'},
+  {name:'Gulf Union Foods',total:5.4,current:2.8,d31:0.9,d61:0.8,d90:0.9,limit:44,lastPay:'02 Apr 2024'},
+  {name:'Al Rajhi Precast',total:5.1,current:2.1,d31:1.1,d61:0.8,d90:1.1,limit:61,lastPay:'18 Feb 2024'},
+  {name:'Saudi Catering',total:4.8,current:2.4,d31:0.8,d61:0.7,d90:0.9,limit:38,lastPay:'28 Mar 2024'},
+  {name:'Marafiq Utilities',total:4.4,current:2.2,d31:0.9,d61:0.6,d90:0.7,limit:32,lastPay:'10 Apr 2024'},
+  {name:'Al Fozan Group',total:4.1,current:1.8,d31:0.8,d61:0.7,d90:0.8,limit:55,lastPay:'22 Mar 2024'},
+  {name:'Dar Al Riyadh',total:3.8,current:1.6,d31:0.9,d61:0.5,d90:0.8,limit:48,lastPay:'05 Mar 2024'},
+  {name:'Al Khalij Commercial',total:3.4,current:1.4,d31:0.8,d61:0.5,d90:0.7,limit:42,lastPay:'15 Mar 2024'},
+];
+
+let selectedRow = null;
+function buildTable() {
+  const tbody = document.getElementById('customerBody');
+  tbody.innerHTML = '';
+  customers.forEach((c, i) => {
+    const overdueAmt = c.d31 + c.d61 + c.d90;
+    const overduePct = ((overdueAmt / c.total) * 100).toFixed(0);
+    const status = c.d90 > 1.5 ? 'red' : c.d61 > 1.5 ? 'yellow' : 'green';
+    const statusLabel = status === 'red' ? 'High Risk' : status === 'yellow' ? 'Monitor' : 'Healthy';
+    const tr = document.createElement('tr');
+    tr.onclick = () => selectRow(i, tr);
+    tr.innerHTML = `
+      <td style="font-weight:500">${c.name}</td>
+      <td style="font-family:'IBM Plex Mono',monospace">SAR ${c.total}M</td>
+      <td style="color:var(--green)">SAR ${c.current}M</td>
+      <td style="color:var(--text2)">SAR ${c.d31}M</td>
+      <td style="color:var(--yellow)">SAR ${c.d61}M</td>
+      <td style="color:var(--red);font-weight:600">SAR ${c.d90}M</td>
+      <td style="color:${overduePct > 30 ? 'var(--red)' : overduePct > 15 ? 'var(--yellow)' : 'var(--green)'}">${overduePct}%</td>
+      <td style="color:${c.limit > 80 ? 'var(--red)' : c.limit > 60 ? 'var(--yellow)' : 'var(--green)'}">${c.limit}%</td>
+      <td style="color:var(--text2);font-size:10px">${c.lastPay}</td>
+      <td><span class="status-dot dot-${status}"></span>${statusLabel}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function selectRow(i, tr) {
+  if (selectedRow) selectedRow.classList.remove('selected');
+  tr.classList.add('selected');
+  selectedRow = tr;
+  const c = customers[i];
+  arPieChart.data.datasets[0].data = [c.current, c.d31, c.d61, c.d90];
+  arPieChart.update();
+}
+
+let sortAsc = true;
+function sortTable() {
+  customers.sort((a, b) => sortAsc ? b.d90 - a.d90 : a.d90 - b.d90);
+  sortAsc = !sortAsc;
+  buildTable();
+}
+
+// ===== WHAT-IF SLIDER =====
+function updateWhatif(val) {
+  document.getElementById('sliderPct').textContent = val;
+  const cashUnlock = (38.8 * val / 100 + 38.8 * val / 100 * 0.12).toFixed(1);
+  const dsoImprovement = (42 * val / 100 * 0.33).toFixed(1);
+  const badDebtReduction = (15.5 * val / 100).toFixed(1);
+  document.getElementById('whatifResult').textContent = 'SAR ' + cashUnlock + 'M';
+  document.getElementById('whatifDSO').textContent = '~' + dsoImprovement + ' days';
+  document.getElementById('whatifBadDebt').textContent = 'SAR ' + badDebtReduction + 'M';
+}
+
+// ===== SCENARIO SIMULATOR =====
+function updateScenario() {
+  const logRed = +document.getElementById('logSlider').value;
+  const dsoImp = +document.getElementById('dsoSlider').value;
+  const revInc = +document.getElementById('revSlider').value;
+  const salRed = +document.getElementById('salSlider').value;
+  document.getElementById('logLabel').textContent = logRed;
+  document.getElementById('dsoLabel').textContent = dsoImp;
+  document.getElementById('revLabel').textContent = revInc;
+  document.getElementById('salLabel').textContent = salRed;
+  const logSaving = 47.1 * logRed / 100;
+  const dsoSaving = dsoImp * 2.4;
+  const revGain = 2840 * revInc / 100 * 0.112;
+  const salSaving = 89.9 * salRed / 100 * 0.3;
+  const projNP = Math.min(400, 318 + logSaving + dsoSaving + revGain + salSaving);
+  const baseRev = 2840 * (1 + revInc/100);
+  const projMargin = (projNP / baseRev * 100).toFixed(1);
+  const upside = projNP - 318;
+  const pctTarget = (projNP / 400 * 100).toFixed(0);
+  document.getElementById('projNP').textContent = 'SAR ' + projNP.toFixed(0) + 'M';
+  document.getElementById('projMargin').textContent = projMargin + '%';
+  document.getElementById('projUpside').textContent = '+SAR ' + upside.toFixed(0) + 'M';
+  document.getElementById('projTarget').textContent = pctTarget + '%';
+}
+
+// ===== AI ANALYST =====
+const aiKnowledge = {
+  'profit below target': 'Revenue hit SAR 2.84B (+12.4%) but Net Profit was SAR 318M, only 79% of the SAR 400M target. The main causes are: (1) OpEx grew faster than revenue — Logistics Services and Trading divisions are the biggest underperformers. (2) DSO at 42 days vs 35-day target means SAR 22.4M is tied up in slow collections. (3) Finance costs of SAR 112M are elevated partly due to overdue AR.',
+  'worst margin': 'Trading and Distribution has the worst performance vs budget at -3.8% below target with a 10.5% NP margin. Logistics Services is also concerning at -1.4% vs budget. Scaffolding & Access is the star performer at +4.2% above budget.',
+  'cash flow risk': 'The biggest cash flow risk is the SAR 38.8M sitting in 90+ day overdue receivables. Top 5 customers account for 68% of this. Additionally, DSO at 42 days vs target 35 means approximately SAR 22.4M is delayed. Finance costs of SAR 112M are also pressuring free cash flow.',
+  'مخاطر التحصيل': 'أكبر مخاطر التحصيل هي المبالغ المتأخرة فوق 90 يوماً والبالغة 38.8 مليون ريال. أكبر 5 عملاء يمثلون 68% من إجمالي المتأخرات. مؤشر DSO حالياً عند 42 يوماً مقارنة بالهدف 35 يوماً، مما يعني احتجاز ما يقارب 22.4 مليون ريال في الديون المتأخرة.',
+  'default': 'Based on the dashboard data: Revenue SAR 2.84B, Net Profit SAR 318M (79% of target), Operating Cash Flow SAR 425M, EBITDA SAR 498M. Key concerns are DSO at 42 days and SAR 38.8M in 90+ day overdue receivables. The Logistics Services and Trading divisions are underperforming vs budget. Would you like me to drill deeper into any of these areas?'
+};
+
+function toggleAI() {
+  const panel = document.getElementById('aiPanel');
+  panel.classList.toggle('open');
+}
+
+function askQ(q) {
+  document.getElementById('aiInput').value = q;
+  sendAI();
+}
+
+function sendAI() {
+  const input = document.getElementById('aiInput');
+  const q = input.value.trim();
+  if (!q) return;
+  const msgs = document.getElementById('aiMessages');
+  msgs.innerHTML += `<div class="ai-msg user">${q}</div>`;
+  msgs.innerHTML += `<div class="ai-msg assistant ai-thinking" id="thinking">Analyzing dashboard data...</div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+  input.value = '';
+  setTimeout(() => {
+    const lq = q.toLowerCase();
+    let ans = aiKnowledge.default;
+    if (lq.includes('profit') || lq.includes('target')) ans = aiKnowledge['profit below target'];
+    else if (lq.includes('margin') || lq.includes('division') || lq.includes('worst')) ans = aiKnowledge['worst margin'];
+    else if (lq.includes('cash') || lq.includes('risk')) ans = aiKnowledge['cash flow risk'];
+    else if (lq.includes('تحصيل') || lq.includes('مخاطر')) ans = aiKnowledge['مخاطر التحصيل'];
+    document.getElementById('thinking').outerHTML = `<div class="ai-msg assistant">${ans}</div>`;
+    msgs.scrollTop = msgs.scrollHeight;
+  }, 1200);
+}
+
+// ===== INITIALIZE CHARTS =====
+window.addEventListener('load', function() {
+  buildTable();
+
+  // AR Pie
+  window.arPieChart = new Chart(document.getElementById('arPieChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['0-30 days','31-60 days','61-90 days','90+ days'],
+      datasets: [{
+        data: [142.4, 88.6, 54.2, 38.8],
+        backgroundColor: ['rgba(16,185,129,.8)','rgba(245,158,11,.7)','rgba(239,68,68,.6)','rgba(239,68,68,.9)'],
+        borderWidth: 0
+      }]
+    },
+    options: {responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'right',labels:{boxWidth:10,padding:8,font:{size:10},color:'#8892a4'}}}}
+  });
+
+  // AR Bar comparison
+  new Chart(document.getElementById('arBarChart'), {
+    type: 'bar',
+    data: {
+      labels: ['0-30','31-60','61-90','90+'],
+      datasets: [
+        {label:'Q4 2024',data:[142.4,88.6,54.2,38.8],backgroundColor:'rgba(0,212,170,.7)',borderRadius:3},
+        {label:'Q3 2024',data:[138.2,82.1,48.6,32.4],backgroundColor:'rgba(59,130,246,.5)',borderRadius:3}
+      ]
+    },
+    options: {responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:8,font:{size:10},color:'#8892a4'}}},scales:{x:{grid:{display:false},ticks:{color:'#8892a4',font:{size:9}}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#8892a4',font:{size:9},callback:v=>'SAR '+v+'M'}}}}
+  });
+
+  // AR Trend
+  new Chart(document.getElementById('arTrendChart'), {
+    type: 'line',
+    data: {
+      labels: ['May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May*','Jun*'],
+      datasets: [
+        {label:'% Overdue (Actual)',data:[8.2,8.8,9.1,9.4,9.8,10.2,10.6,11.0,11.2,11.5,11.8,12.0,null,null],borderColor:'rgba(239,68,68,.9)',backgroundColor:'rgba(239,68,68,.1)',fill:true,tension:.4,pointRadius:3},
+        {label:'Forecast',data:[null,null,null,null,null,null,null,null,null,null,null,12.0,12.6,13.2],borderColor:'rgba(245,158,11,.8)',backgroundColor:'transparent',borderDash:[5,4],tension:.4,pointRadius:3}
+      ]
+    },
+    options: {responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:10,font:{size:10},color:'#8892a4'}}},scales:{x:{grid:{display:false},ticks:{color:'#8892a4',font:{size:9}}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#8892a4',font:{size:9},callback:v=>v+'%'}}}}
+  });
+
+  // Cash Impact
+  new Chart(document.getElementById('cashImpactChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Q1 2024','Q2 2024','Q3 2024','Q4 2024'],
+      datasets: [
+        {label:'Operating CF (SAR M)',data:[98.4,104.2,108.6,113.8],backgroundColor:'rgba(0,212,170,.7)',borderRadius:4},
+        {label:'Delayed Collections Impact',data:[-8.2,-9.4,-10.8,-12.4],backgroundColor:'rgba(239,68,68,.7)',borderRadius:4}
+      ]
+    },
+    options: {responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:10,font:{size:10},color:'#8892a4'}}},scales:{x:{grid:{display:false},ticks:{color:'#8892a4',font:{size:9}}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#8892a4',font:{size:9},callback:v=>'SAR '+v+'M'}}}}
+  });
+
+  // Aging trend QoQ
+  new Chart(document.getElementById('agingTrendChart'), {
+    type: 'bar',
+    data: {
+      labels: ['0-30 days','31-60 days','61-90 days','90+ days'],
+      datasets: [
+        {label:'Q2 2024',data:[145.2,80.4,44.8,28.6],backgroundColor:'rgba(59,130,246,.5)',borderRadius:3},
+        {label:'Q3 2024',data:[138.2,82.1,48.6,32.4],backgroundColor:'rgba(0,212,170,.5)',borderRadius:3},
+        {label:'Q4 2024',data:[142.4,88.6,54.2,38.8],backgroundColor:'rgba(239,68,68,.7)',borderRadius:3}
+      ]
+    },
+    options: {responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:10,font:{size:10},color:'#8892a4'}}},scales:{x:{grid:{display:false},ticks:{color:'#8892a4',font:{size:9}}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#8892a4',font:{size:9},callback:v=>'SAR '+v+'M'}}}}
+  });
+
+  // PE Waterfall
+  new Chart(document.getElementById('peWaterfallChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Gross Revenue','Cost of Revenue','Gross Profit','OpEx','EBIT','Finance Costs','Zakat & Tax','Net Profit'],
+      datasets: [{
+        data: [2840, -2128, 712, -214, 498, -112, -68, 318],
+        backgroundColor: [
+          'rgba(0,212,170,.8)','rgba(239,68,68,.7)','rgba(0,212,170,.6)',
+          'rgba(239,68,68,.7)','rgba(59,130,246,.7)','rgba(239,68,68,.6)',
+          'rgba(239,68,68,.5)','rgba(16,185,129,.8)'
+        ],
+        borderRadius: 4
+      }]
+    },
+    options: {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#8892a4',font:{size:9}}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#8892a4',font:{size:9},callback:v=>'SAR '+v+'M'}}}}
+  });
+
+  // Margin Trend
+  new Chart(document.getElementById('marginTrendChart'), {
+    type: 'line',
+    data: {
+      labels: ['Q1 2023','Q2 2023','Q3 2023','Q4 2023','Q1 2024','Q2 2024','Q3 2024','Q4 2024'],
+      datasets: [
+        {label:'GP%',data:[26.4,26.8,25.9,25.6,25.8,25.4,24.9,24.6],borderColor:'rgba(0,212,170,.9)',backgroundColor:'rgba(0,212,170,.08)',fill:true,tension:.4},
+        {label:'NP%',data:[12.1,12.4,11.8,11.6,11.9,11.4,10.8,11.2],borderColor:'rgba(59,130,246,.9)',backgroundColor:'rgba(59,130,246,.08)',fill:true,tension:.4}
+      ]
+    },
+    options: {responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:10,font:{size:10},color:'#8892a4'}}},scales:{x:{grid:{display:false},ticks:{color:'#8892a4',font:{size:9}}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#8892a4',font:{size:10},callback:v=>v+'%'}}}}
+  });
+
+  // OpEx growth
+  new Chart(document.getElementById('opexGrowthChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Salaries','Logistics','Facilities','IT','Marketing','Other'],
+      datasets: [
+        {label:'Revenue Growth',data:[12.4,12.4,12.4,12.4,12.4,12.4],backgroundColor:'rgba(0,212,170,.3)',borderRadius:3},
+        {label:'OpEx Growth',data:[18.2,22.4,8.6,31.2,14.8,9.2],backgroundColor: ctx => ctx.raw > 12.4 ? 'rgba(239,68,68,.8)' : 'rgba(16,185,129,.8)',borderRadius:3}
+      ]
+    },
+    options: {responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:10,font:{size:10},color:'#8892a4'}}},scales:{x:{grid:{display:false},ticks:{color:'#8892a4',font:{size:9}}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#8892a4',font:{size:9},callback:v=>v+'%'}}}}
+  });
+
+  // Division margin impact
+  new Chart(document.getElementById('divMarginChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Scaffolding','Chemicals','Logistics Svcs','Trading','Real Estate'],
+      datasets: [
+        {label:'FY2023 NP%',data:[11.0,11.4,11.8,11.2,11.1],backgroundColor:'rgba(59,130,246,.5)',borderRadius:3},
+        {label:'FY2024 NP%',data:[11.4,11.6,11.2,10.5,10.9],backgroundColor: ctx => [11.4,11.6,11.2,10.5,10.9][ctx.dataIndex] >= [11.0,11.4,11.8,11.2,11.1][ctx.dataIndex] ? 'rgba(16,185,129,.8)' : 'rgba(239,68,68,.8)',borderRadius:3}
+      ]
+    },
+    options: {responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:10,font:{size:10},color:'#8892a4'}}},scales:{x:{grid:{display:false},ticks:{color:'#8892a4',font:{size:8}}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#8892a4',font:{size:9},callback:v=>v+'%'}}}}
+  });
+
+  // Correlation scatter
+  new Chart(document.getElementById('correlationChart'), {
+    type: 'bubble',
+    data: {
+      datasets: [{
+        label:'Divisions',
+        data: [
+          {x:842.6,y:11.4,r:12},{x:614.8,y:11.6,r:10},{x:524.2,y:11.2,r:16},
+          {x:498.4,y:10.5,r:14},{x:360.0,y:10.9,r:8}
+        ],
+        backgroundColor: ['rgba(16,185,129,.7)','rgba(0,212,170,.7)','rgba(239,68,68,.7)','rgba(245,158,11,.7)','rgba(59,130,246,.7)'],
+        borderWidth: 0
+      }]
+    },
+    options: {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{const names=['Scaffolding','Chemicals','Logistics','Trading','Real Estate'];return names[ctx.dataIndex]+': Rev SAR '+ctx.raw.x+'M, NP '+ctx.raw.y+'%'}}}},scales:{x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#8892a4',font:{size:9},callback:v=>'SAR '+v+'M'},title:{display:true,text:'Revenue (SAR M)',color:'#8892a4',font:{size:10}}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#8892a4',font:{size:9},callback:v=>v+'%'},title:{display:true,text:'NP Margin %',color:'#8892a4',font:{size:10}}}}}
+  });
+});
+</script>
+
+</body>
+</html>
