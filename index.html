@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Intelligence Portfolio — Senior Data Professional | KSA</title>
+<meta name="description" content="Senior Data Engineer, DBA & BI Architect. Certified SQL Server + Sybase ASE. Snowflake, AWS, MongoDB, Power BI, Domo, Tableau. 4-industry portfolio. Saudi Arabia.">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0a0e1a;--ink2:#2d3554;--ink3:#5a6580;
+  --paper:#f7f5f0;--paper2:#eeeae2;--paper3:#e4dfd4;
+  --white:#fff;--gold:#c9a84c;--gold2:#e8c97a;
+  --teal:#0b6e6e;--teal2:#0d8a8a;
+  --red:#b83232;--blue:#1a3a7c;--purple:#4a1a7c;--green:#1a6b3a;
+  --border:rgba(10,14,26,.1);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Lora',Georgia,serif;background:var(--paper);color:var(--ink);line-height:1.6;overflow-x:hidden}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(247,245,240,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 52px;display:flex;align-items:center;justify-content:space-between;height:62px}
+.nav-logo{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:17px;color:var(--ink);letter-spacing:-.3px}
+.nav-logo span{color:var(--gold)}
+.nav-links{display:flex;gap:36px}
+.nav-links a{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3);text-decoration:none;letter-spacing:.5px;text-transform:uppercase;transition:color .2s}
+.nav-links a:hover{color:var(--ink)}
+.nav-cta{font-family:'DM Mono',monospace;font-size:11px;background:var(--ink);color:var(--paper);padding:8px 20px;border-radius:4px;text-decoration:none;letter-spacing:.5px;text-transform:uppercase;transition:all .2s}
+.nav-cta:hover{background:var(--teal)}
+
+.hero{min-height:100vh;display:grid;grid-template-columns:1.1fr .9fr;position:relative;overflow:hidden}
+.hero-left{display:flex;flex-direction:column;justify-content:center;padding:120px 68px 80px}
+.hero-right{background:var(--ink);display:flex;flex-direction:column;justify-content:center;padding:120px 52px 80px;position:relative;overflow:hidden}
+.hero-right::before{content:'';position:absolute;top:-100px;right:-100px;width:460px;height:460px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.12),transparent 70%)}
+
+.eyebrow{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:22px;display:flex;align-items:center;gap:12px}
+.eyebrow::before{content:'';display:block;width:32px;height:1px;background:var(--gold)}
+h1{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(44px,5.2vw,72px);font-weight:800;line-height:1.03;color:var(--ink);letter-spacing:-2.5px;margin-bottom:26px}
+h1 em{font-style:italic;font-family:'Lora',serif;color:var(--teal);font-weight:400}
+.hero-p{font-size:16px;color:var(--ink2);line-height:1.8;max-width:500px;margin-bottom:36px}
+
+.certs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:44px}
+.cert{border:1.5px solid var(--border);border-radius:4px;padding:6px 13px;font-family:'DM Mono',monospace;font-size:11px;color:var(--ink2);background:var(--white)}
+.cert strong{color:var(--ink);font-weight:500}
+.cert.gold{border-color:var(--gold);background:#fffdf5;color:#7a5c00}
+.cert.gold strong{color:#5a3f00}
+
+.btns{display:flex;gap:14px;align-items:center}
+.btn-p{font-family:'DM Mono',monospace;font-size:12px;background:var(--ink);color:var(--paper);padding:13px 26px;border-radius:4px;text-decoration:none;letter-spacing:.5px;text-transform:uppercase;transition:all .2s}
+.btn-p:hover{background:var(--teal);transform:translateY(-2px)}
+.btn-s{font-family:'DM Mono',monospace;font-size:12px;color:var(--ink2);text-decoration:none;letter-spacing:.5px;text-transform:uppercase;border-bottom:1px solid var(--ink3);padding-bottom:2px;transition:color .2s}
+
+.h-stats{position:relative;z-index:2;width:100%}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.stat{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:18px}
+.sv{font-family:'Bricolage Grotesque',sans-serif;font-size:30px;font-weight:800;color:#fff;letter-spacing:-1px;margin-bottom:3px}
+.sv.gold{color:var(--gold2)}.sv.teal{color:#4ecdc4}
+.sl{font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.4);letter-spacing:.6px;text-transform:uppercase}
+.htags{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.htag{display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:6px;padding:11px 15px;color:rgba(255,255,255,.72);font-family:'DM Mono',monospace;font-size:11px}
+.hdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.hr{margin-left:auto;font-size:10px;color:rgba(255,255,255,.32)}
+
+/* ABOUT */
+.about{background:var(--ink);color:#fff;padding:72px 68px}
+.about-in{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 2fr;gap:80px;align-items:start}
+.aname{font-family:'Bricolage Grotesque',sans-serif;font-size:38px;font-weight:800;letter-spacing:-1.5px;line-height:1.1;color:#fff;margin-bottom:10px}
+.arole{font-family:'DM Mono',monospace;font-size:11px;color:var(--gold2);letter-spacing:1px;margin-bottom:20px}
+.alinks a{display:block;font-family:'DM Mono',monospace;font-size:12px;color:rgba(255,255,255,.42);text-decoration:none;margin-bottom:6px;transition:color .2s}
+.alinks a:hover{color:var(--gold2)}
+.ap{font-size:15px;color:rgba(255,255,255,.7);line-height:1.88;margin-bottom:22px}
+.stags{display:flex;flex-wrap:wrap;gap:8px}
+.stag{padding:5px 13px;border-radius:3px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.3px}
+.stag-c{background:rgba(201,168,76,.2);color:var(--gold2);border:1px solid rgba(201,168,76,.3)}
+.stag-s{background:rgba(255,255,255,.07);color:rgba(255,255,255,.62);border:1px solid rgba(255,255,255,.1)}
+
+/* SECTION SHELL */
+.sec-wrap{padding:96px 68px;max-width:1200px;margin:0 auto}
+.sec-wrap-bg{padding:96px 68px;background:var(--paper2)}
+.sec-wrap-bg .sec-in{max-width:1200px;margin:0 auto}
+.sec-lbl{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;gap:12px}
+.sec-lbl::before{content:'';display:block;width:24px;height:1px;background:var(--gold)}
+.sec-h{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(28px,4vw,46px);font-weight:800;letter-spacing:-1.5px;color:var(--ink);line-height:1.1;margin-bottom:14px}
+.sec-h.white{color:#fff}
+.sec-sub{font-size:15px;color:var(--ink3);max-width:560px;line-height:1.75}
+.sec-sub.white{color:rgba(255,255,255,.5)}
+
+/* DASH GRID */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:44px}
+.dc{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:transform .25s,box-shadow .25s;text-decoration:none;color:inherit;display:block}
+.dc:hover{transform:translateY(-6px);box-shadow:0 24px 60px rgba(10,14,26,.12)}
+.dc-top{height:194px;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:22px}
+.dc-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:110px;opacity:.07}
+.dc-bdg{position:absolute;top:16px;right:16px;font-family:'DM Mono',monospace;font-size:10px;padding:4px 10px;border-radius:3px;letter-spacing:.4px;text-transform:uppercase}
+.dc-chips{display:flex;gap:7px;flex-wrap:wrap;position:relative;z-index:1}
+.dc-chip{background:rgba(255,255,255,.18);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.28);border-radius:4px;padding:4px 10px;font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.9);letter-spacing:.3px}
+.dc-body{padding:22px 26px 26px}
+.dc-lbl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:7px}
+.dc-title{font-family:'Bricolage Grotesque',sans-serif;font-size:21px;font-weight:700;letter-spacing:-.4px;color:var(--ink);margin-bottom:5px}
+.dc-org{font-size:13px;color:var(--ink3);margin-bottom:14px;font-style:italic}
+.dc-feats{list-style:none;margin-bottom:18px}
+.dc-feats li{font-size:13px;color:var(--ink2);padding:5px 0;border-bottom:1px solid var(--paper3);display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.dc-feats li:last-child{border-bottom:none}
+.dc-feats li::before{content:'→';color:var(--gold);font-size:11px;margin-top:1px;flex-shrink:0}
+.dc-foot{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--paper3)}
+.dc-open{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink2);text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:6px}
+.dc-arr{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;transition:transform .2s}
+.dc:hover .dc-arr{transform:translateX(4px)}
+
+.dc-pharma .dc-top{background:linear-gradient(135deg,#0d47a1,#1565c0,#00838f)}
+.dc-pharma .dc-lbl{color:#0d47a1}.dc-pharma .dc-arr{background:#e3f2fd;color:#0d47a1}
+.dc-pharma .dc-bdg{background:rgba(13,71,161,.12);color:#0d47a1}
+.dc-cfo .dc-top{background:linear-gradient(135deg,#1a3a1a,#2e7d32,#00695c)}
+.dc-cfo .dc-lbl{color:#2e7d32}.dc-cfo .dc-arr{background:#e8f5e9;color:#2e7d32}
+.dc-cfo .dc-bdg{background:rgba(46,125,50,.12);color:#2e7d32}
+.dc-log .dc-top{background:linear-gradient(135deg,#bf360c,#e65100,#f57c00)}
+.dc-log .dc-lbl{color:#bf360c}.dc-log .dc-arr{background:#fff3e0;color:#bf360c}
+.dc-log .dc-bdg{background:rgba(191,54,12,.12);color:#bf360c}
+.dc-mfg .dc-top{background:linear-gradient(135deg,#311b92,#6a1b9a,#4527a0)}
+.dc-mfg .dc-lbl{color:#6a1b9a}.dc-mfg .dc-arr{background:#f3e5f5;color:#6a1b9a}
+.dc-mfg .dc-bdg{background:rgba(106,27,154,.12);color:#6a1b9a}
+
+/* SKILLS */
+.skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:48px;background:var(--border);border-radius:12px;overflow:hidden}
+.sk{background:#fff;padding:26px 24px 30px}
+.sk-h{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.sk-s{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);letter-spacing:.5px;margin-bottom:16px;text-transform:uppercase}
+.sr{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--paper3);font-size:12px;color:var(--ink2)}
+.sr:last-child{border-bottom:none}
+.sri{display:flex;align-items:center;gap:7px}
+.sdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.slv{font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;border-radius:10px;letter-spacing:.3px;font-weight:500}
+.sl-c{background:#e8f5e9;color:#2e7d32}
+.sl-e{background:#e3f2fd;color:#1565c0}
+.sl-f{background:#fff3e0;color:#e65100}
+
+/* INDUSTRIES DARK */
+.ind-dark{background:var(--ink);padding:96px 68px;color:#fff}
+.ind-in{max-width:1200px;margin:0 auto}
+.ind-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin-top:48px;background:rgba(255,255,255,.07);border-radius:12px;overflow:hidden}
+.ic{background:var(--ink);padding:30px 24px;position:relative;overflow:hidden;transition:background .2s}
+.ic:hover{background:#111827}
+.ic::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.ic-ph::before{background:linear-gradient(90deg,#0d47a1,#00838f)}
+.ic-cf::before{background:linear-gradient(90deg,#2e7d32,#00695c)}
+.ic-lg::before{background:linear-gradient(90deg,#e65100,#f57c00)}
+.ic-mf::before{background:linear-gradient(90deg,#6a1b9a,#4527a0)}
+.ic-icon{font-size:28px;margin-bottom:12px}
+.ic-title{font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:700;color:#fff;margin-bottom:7px;letter-spacing:-.3px}
+.ic-desc{font-size:12px;color:rgba(255,255,255,.42);line-height:1.7;margin-bottom:16px}
+.ic-list{display:flex;flex-direction:column;gap:5px}
+.ic-item{font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.3);display:flex;align-items:center;gap:5px}
+.ic-item::before{content:'·';color:var(--gold2)}
+
+/* JOBS */
+.jobs-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:44px}
+.jc{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px 18px;display:flex;align-items:flex-start;gap:13px;transition:border-color .2s,box-shadow .2s}
+.jc:hover{border-color:var(--teal2);box-shadow:0 4px 20px rgba(11,110,110,.08)}
+.jfit{width:48px;height:48px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-size:9px;font-weight:800;text-align:center;line-height:1.2;flex-shrink:0}
+.jf-p{background:#e8f5e9;color:#1b5e20}
+.jf-s{background:#e3f2fd;color:#0d47a1}
+.jf-g{background:#fff3e0;color:#bf360c}
+.ji-t{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:700;color:var(--ink);margin-bottom:2px;letter-spacing:-.2px}
+.ji-i{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);letter-spacing:.4px;margin-bottom:4px;text-transform:uppercase}
+.ji-s{font-family:'DM Mono',monospace;font-size:11px;color:var(--teal);font-weight:500}
+
+/* COMPANIES */
+.co-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:44px}
+.cc{background:#fff;border:1px solid var(--border);border-radius:8px;padding:15px 17px;transition:all .2s}
+.cc:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 8px 24px rgba(10,14,26,.06)}
+.cc-n{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.cc-w{font-size:12px;color:var(--ink3);line-height:1.6;margin-bottom:7px}
+.cc-m{font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:.3px;border-top:1px solid var(--paper3);padding-top:6px}
+
+/* GITHUB */
+.gh-steps{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:44px}
+.gh-step{background:#fff;border:1px solid var(--border);border-radius:10px;padding:22px 24px}
+.gh-num{font-family:'Bricolage Grotesque',sans-serif;font-size:42px;font-weight:800;color:var(--paper3);line-height:1;margin-bottom:10px}
+.gh-t{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:7px}
+.gh-b{font-size:13px;color:var(--ink2);line-height:1.75}
+.cmd{background:var(--ink);color:#a5d6a7;font-family:'DM Mono',monospace;font-size:11px;padding:10px 14px;border-radius:6px;margin:8px 0;line-height:1.8;white-space:pre;overflow-x:auto;display:block}
+code{font-family:'DM Mono',monospace;font-size:11px;background:var(--paper2);padding:2px 6px;border-radius:3px;color:var(--ink)}
+
+/* CV */
+.cv-hl{background:var(--ink);color:#fff;border-radius:10px;padding:24px 28px;margin:44px 0 13px;font-size:15px;line-height:1.85;font-style:italic}
+.cv-hl strong{color:var(--gold2);font-style:normal}
+.cv-list{background:#fff;border:1px solid var(--border);border-radius:10px;padding:20px 24px}
+.cv-item{font-size:13px;color:var(--ink2);line-height:1.78;padding:10px 0;border-bottom:1px solid var(--paper3);display:flex;gap:10px;align-items:flex-start}
+.cv-item:last-child{border-bottom:none}
+.cv-item::before{content:'▸';color:var(--gold);font-size:12px;margin-top:2px;flex-shrink:0}
+.cv-item strong{color:var(--ink)}
+
+footer{background:var(--ink);color:rgba(255,255,255,.36);padding:36px 68px;display:flex;align-items:center;justify-content:space-between;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.3px}
+footer strong{color:rgba(255,255,255,.62)}
+
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr}.hero-right{display:none}
+  nav{padding:0 24px}
+  .about{padding:56px 24px}.about-in{grid-template-columns:1fr;gap:36px}
+  .sec-wrap,.sec-wrap-bg{padding:64px 24px}
+  .dash-grid,.jobs-grid,.gh-steps,.co-grid,.skills-grid,.ind-grid{grid-template-columns:1fr}
+  footer{flex-direction:column;gap:10px;padding:28px 24px;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Data<span>.</span>Intelligence</div>
+  <div class="nav-links">
+    <a href="#dashboards">Dashboards</a>
+    <a href="#skills">Skills</a>
+    <a href="#jobs">Roles</a>
+    <a href="#github">GitHub</a>
+  </div>
+  <a href="#dashboards" class="nav-cta">View Work ↓</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-left">
+    <div class="eyebrow">Full-Stack Data Professional — Saudi Arabia 2025</div>
+    <h1>Everything<br><em>Data.</em><br>One Profile.</h1>
+    <p class="hero-p">Certified DBA who works across the entire data spectrum — from database infrastructure and cloud data warehousing to BI dashboards and executive analytics. SQL Server. Sybase. Snowflake. AWS. MongoDB. Power BI. Domo. Tableau. Python. Data Management. Data Warehousing. Four industries. End-to-end.</p>
+    <div class="certs">
+      <div class="cert gold"><strong>Certified</strong> MS SQL Server DBA</div>
+      <div class="cert gold"><strong>Certified</strong> Sybase ASE DBA</div>
+      <div class="cert">Snowflake · AWS</div>
+      <div class="cert">MongoDB · PostgreSQL</div>
+      <div class="cert">Power BI · Domo · Tableau</div>
+      <div class="cert">Python · pandas</div>
+      <div class="cert">Data Warehousing · ETL</div>
+      <div class="cert">Data Management · Wrangling</div>
+      <div class="cert">Arabic / English</div>
+    </div>
+    <div class="btns">
+      <a href="#dashboards" class="btn-p">See the Dashboards ↓</a>
+      <a href="#github" class="btn-s">GitHub Setup →</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="h-stats">
+      <div class="stat-row">
+        <div class="stat"><div class="sv gold">4</div><div class="sl">Industries</div></div>
+        <div class="stat"><div class="sv">8+</div><div class="sl">DB Technologies</div></div>
+      </div>
+      <div class="stat-row">
+        <div class="stat"><div class="sv teal">3</div><div class="sl">BI Platforms</div></div>
+        <div class="stat"><div class="sv">2</div><div class="sl">DBA Certifications</div></div>
+      </div>
+      <div class="htags">
+        <div class="htag"><div class="hdot" style="background:#4a90e2"></div>SQL Server · Sybase · PostgreSQL · Oracle<span class="hr">Relational</span></div>
+        <div class="htag"><div class="hdot" style="background:#f7a85a"></div>Snowflake · AWS RDS · Redshift · Aurora<span class="hr">Cloud DW</span></div>
+        <div class="htag"><div class="hdot" style="background:#4ecdc4"></div>MongoDB — Document Store / NoSQL<span class="hr">NoSQL</span></div>
+        <div class="htag"><div class="hdot" style="background:#b57bee"></div>Power BI · Domo BI · Tableau<span class="hr">BI Platforms</span></div>
+        <div class="htag"><div class="hdot" style="background:#81c784"></div>Python · pandas · Data Wrangling · ETL<span class="hr">Analytics</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="about" id="about">
+  <div class="about-in">
+    <div>
+      <div class="aname">Senior<br>Data<br>Professional</div>
+      <div class="arole">Dammam · Eastern Province · KSA</div>
+      <div class="alinks">
+        <a href="mailto:your@email.com">your@email.com</a>
+        <a href="https://linkedin.com/in/yourprofile">linkedin.com/in/yourprofile</a>
+        <a href="https://github.com/yourusername">github.com/yourusername</a>
+      </div>
+    </div>
+    <div>
+      <p class="ap">Certified Database Administrator with dual certification in MS SQL Server and Sybase ASE, and deep hands-on experience across the complete modern data stack — cloud data warehousing (Snowflake, AWS Redshift), NoSQL (MongoDB), relational databases (PostgreSQL, Oracle), BI platforms (Power BI, Domo BI, Tableau), data management, data warehousing architecture, data wrangling, ETL pipelines, and Python-based analytics.</p>
+      <p class="ap">I have built production-grade executive intelligence dashboards across four of Saudi Arabia's most critical sectors — Healthcare (SFDA/MOH compliance), Finance (CFO P&L and AR risk), Logistics (real-time fleet and delivery operations), and Heavy Manufacturing (OEE and production analytics). Each dashboard connects to real database sources, implements multi-level drill-down analytics, and is designed for C-suite decision-making. This is the full data chain — from database infrastructure to executive insight — delivered by one professional.</p>
+      <div class="stags">
+        <span class="stag stag-c">MS SQL Server — Certified DBA</span>
+        <span class="stag stag-c">Sybase ASE — Certified DBA</span>
+        <span class="stag stag-s">Snowflake</span><span class="stag stag-s">AWS Databases</span>
+        <span class="stag stag-s">MongoDB</span><span class="stag stag-s">PostgreSQL</span><span class="stag stag-s">Oracle</span>
+        <span class="stag stag-s">Power BI + DAX</span><span class="stag stag-s">Domo BI</span><span class="stag stag-s">Tableau</span>
+        <span class="stag stag-s">Python + pandas</span><span class="stag stag-s">Data Warehousing</span>
+        <span class="stag stag-s">Data Management</span><span class="stag stag-s">Data Wrangling</span>
+        <span class="stag stag-s">ETL Pipelines</span><span class="stag stag-s">Star Schema Design</span>
+        <span class="stag stag-s">T-SQL · PL-SQL</span><span class="stag stag-s">REST API · FHIR</span>
+        <span class="stag stag-s">SFDA · MOH Compliance</span>
+        <span class="stag stag-s">Arabic / English</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARDS -->
+<div class="sec-wrap-bg" id="dashboards">
+  <div class="sec-in">
+    <div class="sec-lbl">Portfolio — 4 Live Dashboards</div>
+    <h2 class="sec-h">Executive Intelligence<br>Across Four Industries</h2>
+    <p class="sec-sub">Production-grade dashboards — real KPIs, real Saudi organisations, real regulatory context. Click any card to open live.</p>
+    <div class="dash-grid">
+      <a href="pharma/index.html" class="dc dc-pharma" target="_blank">
+        <div class="dc-top">
+          <div class="dc-bg">💊</div>
+          <div class="dc-bdg">Healthcare · SFDA · MOH</div>
+          <div class="dc-chips"><div class="dc-chip">98.7% Compliance</div><div class="dc-chip">33 Drill-Downs</div><div class="dc-chip">4-Level Deep</div></div>
+        </div>
+        <div class="dc-body">
+          <div class="dc-lbl">💊 Pharma Intelligence</div>
+          <div class="dc-title">SFDA Compliance Dashboard</div>
+          <div class="dc-org">Domo Health — Saudi Arabia</div>
+          <ul class="dc-feats">
+            <li>33 drill-down panels: KPI → Category → Batch → Root Cause + Penalty</li>
+            <li>98,700 batches tracked — SFDA RSD serialization + sync status</li>
+            <li>247 near-expiry SKUs · SAR 302K financial exposure management</li>
+            <li>MOH controlled drug patient transaction log — full audit trail</li>
+            <li>Cold chain breach · Vendor SLA penalty tracking · Audit readiness</li>
+          </ul>
+          <div class="dc-foot">
+            <span class="dc-open">Open Dashboard <span class="dc-arr">→</span></span>
+            <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3)">33 panels · 7 chains</span>
+          </div>
+        </div>
+      </a>
+      <a href="cfo/index.html" class="dc dc-cfo" target="_blank">
+        <div class="dc-top">
+          <div class="dc-bg">💼</div>
+          <div class="dc-bdg">Finance · CFO · Executive</div>
+          <div class="dc-chips"><div class="dc-chip">SAR 2.84B Revenue</div><div class="dc-chip">AI Analyst</div><div class="dc-chip">What-If</div></div>
+        </div>
+        <div class="dc-body">
+          <div class="dc-lbl">💼 CFO Finance Intelligence</div>
+          <div class="dc-title">CFO Executive Dashboard</div>
+          <div class="dc-org">Saudi Industrial Conglomerate</div>
+          <ul class="dc-feats">
+            <li>SAR 2.84B revenue · EBITDA SAR 498M · 6-division P&L waterfall</li>
+            <li>AR aging: SAR 38.8M in 90+ day overdue · DSO 42 days vs 35 target</li>
+            <li>Interactive What-If simulator — model cash unlock scenarios</li>
+            <li>4-variable scenario engine — live net profit projection</li>
+            <li>Bilingual AI analyst chatbot — Arabic + English dashboard queries</li>
+          </ul>
+          <div class="dc-foot">
+            <span class="dc-open">Open Dashboard <span class="dc-arr">→</span></span>
+            <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3)">3 pages · AI-powered</span>
+          </div>
+        </div>
+      </a>
+      <a href="logistics/index.html" class="dc dc-log" target="_blank">
+        <div class="dc-top">
+          <div class="dc-bg">🚚</div>
+          <div class="dc-bdg">Logistics · Real-Time Ops</div>
+          <div class="dc-chips"><div class="dc-chip">14,284 Shipments/day</div><div class="dc-chip">OTIF 96.4%</div><div class="dc-chip">2,090 Fleet</div></div>
+        </div>
+        <div class="dc-body">
+          <div class="dc-lbl">🚚 Logistics & Distribution</div>
+          <div class="dc-title">Naqel Express Dashboard</div>
+          <div class="dc-org">Naqel Express — KSA</div>
+          <ul class="dc-feats">
+            <li>14,284 daily shipments · OTIF 96.4% · First Attempt Delivery 91.8%</li>
+            <li>Fleet: 2,090 vehicles · 88.2% utilisation · live tracking</li>
+            <li>5-region warehouse utilisation with capacity indicators</li>
+            <li>Client SLA performance table · exception management workflow</li>
+            <li>Cost per shipment: SAR 24.8 · Customer satisfaction: 4.6/5.0</li>
+          </ul>
+          <div class="dc-foot">
+            <span class="dc-open">Open Dashboard <span class="dc-arr">→</span></span>
+            <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3)">Real-time ops · Live KPIs</span>
+          </div>
+        </div>
+      </a>
+      <a href="manufacturing/index.html" class="dc dc-mfg" target="_blank">
+        <div class="dc-top">
+          <div class="dc-bg">🏭</div>
+          <div class="dc-bdg">Manufacturing · OEE · Heavy Industry</div>
+          <div class="dc-chips"><div class="dc-chip">2,847 T/day</div><div class="dc-chip">OEE Live</div><div class="dc-chip">8 Machines</div></div>
+        </div>
+        <div class="dc-body">
+          <div class="dc-lbl">🏭 Manufacturing Intelligence</div>
+          <div class="dc-title">Saudi Steel Dashboard</div>
+          <div class="dc-org">Saudi Steel Industries</div>
+          <ul class="dc-feats">
+            <li>OEE: Availability 91.4% · Performance 87.6% · Quality 96.8%</li>
+            <li>Real-time: Rolling Mills, Furnaces, Billet Caster, Cooling Bed</li>
+            <li>2,847 T/day output · 67,340 T MTD production tracking</li>
+            <li>Downtime Pareto — ranked root cause & duration analysis</li>
+            <li>Energy 412 kWh/T · Defect 3.2% · Safety 0.42 incidents/mo</li>
+          </ul>
+          <div class="dc-foot">
+            <span class="dc-open">Open Dashboard <span class="dc-arr">→</span></span>
+            <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3)">8 machines · Live feed</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- SKILLS -->
+<div class="sec-wrap" id="skills">
+  <div class="sec-lbl">Technical Stack</div>
+  <h2 class="sec-h">Complete Skills Matrix</h2>
+  <p class="sec-sub">The entire data chain — from raw infrastructure to executive dashboard. Every skill applied in real projects.</p>
+  <div class="skills-grid">
+    <div class="sk">
+      <div class="sk-h">🗄 Relational Databases</div><div class="sk-s">Certified + Production</div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#2e7d32"></div>MS SQL Server</div><span class="slv sl-c">CERTIFIED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#2e7d32"></div>Sybase ASE</div><span class="slv sl-c">CERTIFIED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>PostgreSQL</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>Oracle Database</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>T-SQL / PL-SQL</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>Stored Procs / Views</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>Performance Tuning</div><span class="slv sl-e">EXPERIENCED</span></div>
+    </div>
+    <div class="sk">
+      <div class="sk-h">☁ Cloud & Data Warehousing</div><div class="sk-s">Modern Cloud Platforms</div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>Snowflake</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>AWS RDS</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>AWS Redshift</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>AWS S3 / Aurora</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>Data Warehousing Architecture</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>Star / Snowflake Schema</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#e65100"></div>dbt (learning)</div><span class="slv sl-f">LEARNING</span></div>
+    </div>
+    <div class="sk">
+      <div class="sk-h">🍃 NoSQL & Unstructured</div><div class="sk-s">Document & Non-Relational</div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>MongoDB</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>Document Modelling</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>Aggregation Pipelines</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#e65100"></div>AWS DynamoDB</div><span class="slv sl-f">FAMILIAR</span></div>
+    </div>
+    <div class="sk">
+      <div class="sk-h">📊 BI Platforms — All Three</div><div class="sk-s">Enterprise Visualisation</div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>Power BI Desktop + Service</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>DAX Measures & Calc Cols</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>Domo BI</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>Tableau</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>Power Query (M)</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>Chart.js / HTML Dashboards</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>4-Level Drill-Down Design</div><span class="slv sl-e">EXPERIENCED</span></div>
+    </div>
+    <div class="sk">
+      <div class="sk-h">🔧 Data Engineering</div><div class="sk-s">Pipelines, Quality & Management</div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>ETL Pipeline Design</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>Data Management</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>Data Wrangling / Cleansing</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>Data Quality & Governance</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>Python · pandas · numpy</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>REST API / JSON / HL7 FHIR</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#e65100"></div>Apache Airflow (learning)</div><span class="slv sl-f">LEARNING</span></div>
+    </div>
+    <div class="sk">
+      <div class="sk-h">🌍 Domain & Regional</div><div class="sk-s">Industry Context — KSA</div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#2e7d32"></div>SFDA / MOH Compliance</div><span class="slv sl-c">DOMAIN</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>Healthcare / Pharma</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>Finance / CFO Analytics</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>Logistics / Supply Chain</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>Manufacturing / OEE</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>SAP / Oracle Integration</div><span class="slv sl-e">EXPERIENCED</span></div>
+      <div class="sr"><div class="sri"><div class="sdot" style="background:#1565c0"></div>Arabic / English</div><span class="slv sl-e">NATIVE</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- INDUSTRIES -->
+<div class="ind-dark" id="industries">
+  <div class="ind-in">
+    <div class="sec-lbl" style="color:var(--gold2)">Coverage</div>
+    <h2 class="sec-h white">Four Industries.<br>One Professional.</h2>
+  </div>
+  <div class="ind-grid" style="max-width:1200px;margin:48px auto 0">
+    <div class="ic ic-ph"><div class="ic-icon">💊</div><div class="ic-title">Healthcare & Pharma</div><div class="ic-desc">SFDA regulatory compliance, MOH controlled drug tracking, cold chain GDP, pharmaceutical supply chain.</div><div class="ic-list"><div class="ic-item">SFDA RSD serialization (98,700 batches)</div><div class="ic-item">MOH Schedule I–III controlled drugs</div><div class="ic-item">GDP cold chain breach management</div><div class="ic-item">Audit readiness countdown (June 15)</div><div class="ic-item">Near-expiry financial risk SAR 302K</div></div></div>
+    <div class="ic ic-cf"><div class="ic-icon">💼</div><div class="ic-title">Finance & Corporate</div><div class="ic-desc">CFO-level P&L intelligence, AR risk, cash flow management, and scenario modelling for Saudi conglomerates.</div><div class="ic-list"><div class="ic-item">SAR 2.84B revenue tracking</div><div class="ic-item">AR aging & DSO management</div><div class="ic-item">What-If cash unlock simulation</div><div class="ic-item">6-division budget vs actual</div><div class="ic-item">AI analyst — bilingual Arabic/English</div></div></div>
+    <div class="ic ic-lg"><div class="ic-icon">🚚</div><div class="ic-title">Logistics & Supply Chain</div><div class="ic-desc">Last-mile delivery intelligence, fleet management, warehouse operations, SLA tracking for KSA carriers.</div><div class="ic-list"><div class="ic-item">14,284 daily shipments tracked</div><div class="ic-item">OTIF, FAD, cost-per-shipment KPIs</div><div class="ic-item">2,090-vehicle fleet utilisation</div><div class="ic-item">5-region warehouse capacity</div><div class="ic-item">Client SLA exception management</div></div></div>
+    <div class="ic ic-mf"><div class="ic-icon">🏭</div><div class="ic-title">Manufacturing & Industrial</div><div class="ic-desc">OEE dashboards, real-time machine monitoring, downtime analysis, energy tracking for heavy industry.</div><div class="ic-list"><div class="ic-item">OEE: Availability, Performance, Quality</div><div class="ic-item">8 machines — real-time status feed</div><div class="ic-item">Downtime Pareto root cause analysis</div><div class="ic-item">Energy 412 kWh/tonne monitoring</div><div class="ic-item">Safety incident rate tracking</div></div></div>
+  </div>
+</div>
+
+<!-- JOBS -->
+<div class="sec-wrap" id="jobs">
+  <div class="sec-lbl">Career Map</div>
+  <h2 class="sec-h">Roles You Can Apply For Now</h2>
+  <p class="sec-sub">Ranked by fit. Every role has direct evidence in this portfolio and skill set.</p>
+  <div class="jobs-grid">
+    <div class="jc"><div class="jfit jf-p">PERFECT<br>FIT</div><div class="ji-t">Cloud Data Architect</div><div class="ji-i">AWS · Snowflake · SQL Server</div><div class="ji-s">SAR 30,000–55,000/mo</div></div>
+    <div class="jc"><div class="jfit jf-p">PERFECT<br>FIT</div><div class="ji-t">Senior Data Engineer</div><div class="ji-i">Snowflake · AWS · Python · ETL</div><div class="ji-s">SAR 22,000–42,000/mo</div></div>
+    <div class="jc"><div class="jfit jf-p">PERFECT<br>FIT</div><div class="ji-t">Data Warehousing Architect</div><div class="ji-i">Snowflake · Redshift · SQL DW</div><div class="ji-s">SAR 28,000–50,000/mo</div></div>
+    <div class="jc"><div class="jfit jf-p">PERFECT<br>FIT</div><div class="ji-t">Senior DBA + BI (Combined)</div><div class="ji-i">Any Industry — Rare Profile</div><div class="ji-s">SAR 22,000–40,000/mo</div></div>
+    <div class="jc"><div class="jfit jf-p">PERFECT<br>FIT</div><div class="ji-t">Sybase ASE Migration Specialist</div><div class="ji-i">Banking · Telecom · Industrial</div><div class="ji-s">SAR 25,000–45,000/mo</div></div>
+    <div class="jc"><div class="jfit jf-p">PERFECT<br>FIT</div><div class="ji-t">Senior BI Developer / Architect</div><div class="ji-i">Power BI · Domo · Tableau</div><div class="ji-s">SAR 20,000–38,000/mo</div></div>
+    <div class="jc"><div class="jfit jf-p">PERFECT<br>FIT</div><div class="ji-t">Analytics Engineer</div><div class="ji-i">Snowflake + dbt + BI stack</div><div class="ji-s">SAR 22,000–40,000/mo</div></div>
+    <div class="jc"><div class="jfit jf-p">PERFECT<br>FIT</div><div class="ji-t">MongoDB / NoSQL Architect</div><div class="ji-i">Fintech · Banking · Digital Health</div><div class="ji-s">SAR 25,000–45,000/mo</div></div>
+    <div class="jc"><div class="jfit jf-p">PERFECT<br>FIT</div><div class="ji-t">Healthcare Data Intelligence Lead</div><div class="ji-i">SFDA · MOH · Hospital Groups</div><div class="ji-s">SAR 18,000–32,000/mo</div></div>
+    <div class="jc"><div class="jfit jf-s">STRONG<br>FIT</div><div class="ji-t">AWS Data Solutions Architect</div><div class="ji-i">RDS · Redshift · S3 · Aurora</div><div class="ji-s">SAR 30,000–55,000/mo</div></div>
+    <div class="jc"><div class="jfit jf-s">STRONG<br>FIT</div><div class="ji-t">Digital Transformation Consultant</div><div class="ji-i">Big 4 · Vision 2030 Projects</div><div class="ji-s">SAR 22,000–45,000/mo</div></div>
+    <div class="jc"><div class="jfit jf-g">ADD<br>PYTHON</div><div class="ji-t">Data Scientist / ML Engineer</div><div class="ji-i">Add scikit-learn to close this gap</div><div class="ji-s">SAR 25,000–50,000/mo</div></div>
+  </div>
+</div>
+
+<!-- COMPANIES -->
+<div class="sec-wrap-bg" id="companies">
+  <div class="sec-in">
+    <div class="sec-lbl">Target List</div>
+    <h2 class="sec-h">Companies to Approach</h2>
+    <p class="sec-sub">Each mapped to your portfolio. Where you have a matching dashboard — lead with it.</p>
+    <div class="co-grid">
+      <div class="cc"><div class="cc-n">Saudi Aramco</div><div class="cc-w">SAP + SQL Server + Sybase. OEE analytics, supply chain, data engineering at scale.</div><div class="cc-m">Mfg + CFO + DBA certs</div></div>
+      <div class="cc"><div class="cc-n">SABIC</div><div class="cc-w">Heavy manufacturing, SAP-centric. OEE and production analytics in high demand.</div><div class="cc-m">Manufacturing dashboard</div></div>
+      <div class="cc"><div class="cc-n">Saudi National Bank</div><div class="cc-w">Runs Sybase ASE on core banking. Your cert is rare. Snowflake modernisation active.</div><div class="cc-m">Sybase cert + Snowflake</div></div>
+      <div class="cc"><div class="cc-n">Al Rajhi Bank</div><div class="cc-w">SQL Server + MongoDB + BI modernisation. CFO analytics directly applicable.</div><div class="cc-m">CFO + DBA + MongoDB</div></div>
+      <div class="cc"><div class="cc-n">Naqel Express</div><div class="cc-w">You built their dashboard with their exact KPIs. Walk in and show it.</div><div class="cc-m">Logistics — direct match</div></div>
+      <div class="cc"><div class="cc-n">Nahdi / Al-Dawaa</div><div class="cc-w">Pharmacy retail under SFDA compliance pressure. Pharma dashboard is their exact need.</div><div class="cc-m">Pharma dashboard — direct</div></div>
+      <div class="cc"><div class="cc-n">MOH / NGHA</div><div class="cc-w">Digital transformation. SFDA, MOH, HIS. Domo BI used across MOH projects.</div><div class="cc-m">Pharma + Domo + DBA</div></div>
+      <div class="cc"><div class="cc-n">Deloitte / PwC / KPMG</div><div class="cc-w">Vision 2030 data projects. 4-industry + full stack = ideal consulting hire.</div><div class="cc-m">All 4 dashboards</div></div>
+      <div class="cc"><div class="cc-n">Accenture / IBM KSA</div><div class="cc-w">SAP, Oracle, SQL Server + Snowflake modernisation projects.</div><div class="cc-m">DBA + Cloud + BI</div></div>
+      <div class="cc"><div class="cc-n">Saudi Steel / HADEED</div><div class="cc-w">Heavy industry. Manufacturing OEE dashboard built exactly for this sector.</div><div class="cc-m">Manufacturing — direct</div></div>
+      <div class="cc"><div class="cc-n">Aramex / DHL Arabia</div><div class="cc-w">Logistics. Naqel dashboard covers their exact OTIF, fleet, warehouse KPIs.</div><div class="cc-m">Logistics dashboard</div></div>
+      <div class="cc"><div class="cc-n">stc / Zain / Mobily</div><div class="cc-w">Telecoms on legacy Sybase ASE. Migration + Snowflake + BI modernisation.</div><div class="cc-m">Sybase + Snowflake + BI</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- GITHUB -->
+<div class="sec-wrap" id="github">
+  <div class="sec-lbl">Do This Today</div>
+  <h2 class="sec-h">Get Live on GitHub<br>in 30 Minutes</h2>
+  <p class="sec-sub">Your work is done. You just need to make it visible. Follow these steps exactly.</p>
+  <div class="gh-steps">
+    <div class="gh-step">
+      <div class="gh-num">01</div>
+      <div class="gh-t">Repository already created ✓</div>
+      <div class="gh-b">You've already done this step. Your repository is live. Move straight to step 02 — uploading this file.</div>
+    </div>
+    <div class="gh-step">
+      <div class="gh-num">02</div>
+      <div class="gh-t">Upload this index.html</div>
+      <div class="gh-b">In your GitHub repo → <strong>Add file → Upload files</strong>. Drag this <code>index.html</code> file in. Commit message: <code>Add portfolio homepage</code>. Click Commit.</div>
+    </div>
+    <div class="gh-step">
+      <div class="gh-num">03</div>
+      <div class="gh-t">Create dashboard folders</div>
+      <div class="gh-b">Click <strong>Add file → Create new file</strong>. In the filename box type:
+<span class="cmd">pharma/index.html</span>
+Paste the entire pharma dashboard HTML. Commit. Repeat for:
+<span class="cmd">cfo/index.html
+logistics/index.html
+manufacturing/index.html</span></div>
+    </div>
+    <div class="gh-step">
+      <div class="gh-num">04</div>
+      <div class="gh-t">Enable GitHub Pages</div>
+      <div class="gh-b">Repository → <strong>Settings → Pages → Source: Deploy from branch → main → / (root) → Save</strong>. Wait 2 minutes. Your portfolio is live at:
+<span class="cmd">https://yourusername.github.io</span></div>
+    </div>
+    <div class="gh-step">
+      <div class="gh-num">05</div>
+      <div class="gh-t">Update your contact details</div>
+      <div class="gh-b">Open <code>index.html</code> in Notepad. Find and replace:<br><br>
+      <code>your@email.com</code> → your real email<br>
+      <code>yourprofile</code> → your LinkedIn username<br>
+      <code>yourusername</code> → your GitHub username<br>
+      <code>Senior Data Professional</code> → your name<br><br>
+      Re-upload to GitHub.</div>
+    </div>
+    <div class="gh-step">
+      <div class="gh-num">06</div>
+      <div class="gh-t">Add to LinkedIn profile</div>
+      <div class="gh-b">LinkedIn → <strong>Contact Info → Website</strong> → add <code>https://yourusername.github.io</code>. Also paste it in your About section. Every recruiter who views your profile now sees your full live portfolio with one click.</div>
+    </div>
+  </div>
+</div>
+
+<!-- CV -->
+<div class="sec-wrap-bg">
+  <div class="sec-in">
+    <div class="sec-lbl">CV Content</div>
+    <h2 class="sec-h">Ready-to-Use CV Lines</h2>
+    <p class="sec-sub">Copy directly. Specific, quantified, and verifiable from your portfolio and certifications.</p>
+    <div class="cv-hl">
+      <strong>Professional Summary:</strong> Certified DBA (MS SQL Server + Sybase ASE) and full-stack data professional with hands-on experience across cloud data warehousing (Snowflake, AWS Redshift), NoSQL (MongoDB), relational databases (PostgreSQL, Oracle), BI platforms (Power BI, Domo BI, Tableau), data management, data warehousing architecture, data wrangling, ETL pipelines, and Python analytics. Delivered production-grade executive intelligence dashboards across <strong>Healthcare, Finance, Logistics, and Manufacturing</strong> sectors in Saudi Arabia. Bilingual Arabic / English.
+    </div>
+    <div class="cv-list">
+      <div class="cv-item">Designed and delivered a <strong>4-level interactive SFDA compliance dashboard</strong> — 33 drill-down panels covering drug serialization (98,700 batches), near-expiry risk (SAR 302K), MOH controlled drug audit trail, cold chain GDP breach management, and vendor SLA penalty tracking.</div>
+      <div class="cv-item">Built <strong>CFO Executive Finance Dashboard</strong> for a SAR 2.84B Saudi industrial conglomerate — P&L waterfall across 6 divisions, EBITDA SAR 498M, AR aging (SAR 38.8M 90+ day overdue), interactive What-If cash simulator, scenario modelling engine, and bilingual AI analyst chatbot (Arabic/English).</div>
+      <div class="cv-item">Delivered <strong>real-time logistics operations dashboard</strong> for Naqel Express — 14,284 daily shipments, OTIF 96.4%, fleet utilisation across 2,090 vehicles, 5-region warehouse capacity management, and client SLA exception workflow.</div>
+      <div class="cv-item">Built <strong>manufacturing OEE dashboard</strong> for Saudi Steel Industries — Availability 91.4%, Performance 87.6%, Quality 96.8% across 8 live machines, Pareto downtime analysis, energy 412 kWh/tonne, 2,847 T/day production tracking.</div>
+      <div class="cv-item">Designed enterprise <strong>data warehouse architectures</strong> using star and snowflake schemas across SQL Server, Snowflake, and AWS Redshift — with ETL pipelines, data wrangling, data quality management, and multi-source integration (REST APIs, SAP, Oracle, HL7/FHIR).</div>
+      <div class="cv-item">Experienced across <strong>three enterprise BI platforms</strong> — Power BI (DAX, Power Query, drill-through, RLS, data model design), Domo BI (datasets, dataflows, Beast Mode, scheduled reports), and Tableau (calculated fields, LOD expressions, dashboard actions).</div>
+      <div class="cv-item">Dual-certified DBA in <strong>MS SQL Server and Sybase ASE</strong> — rare combination for Sybase migration projects across GCC banking, telecom, and industrial sectors. Additional experience: MongoDB, PostgreSQL, AWS (RDS, Redshift, S3, Aurora), Snowflake, Python/pandas.</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div><strong>Data Intelligence Portfolio</strong> — Dammam, Saudi Arabia</div>
+  <div>SQL Server · Sybase · Snowflake · AWS · MongoDB · Power BI · Domo · Tableau</div>
+  <div>Healthcare · Finance · Logistics · Manufacturing</div>
+</footer>
+
+</body>
+</html>
