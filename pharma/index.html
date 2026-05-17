@@ -1,0 +1,2149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Domo Pharma Intelligence — SFDA Compliance Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --bg:#f4f7fb;
+  --surf:#ffffff;
+  --surf2:#f0f4fa;
+  --surf3:#e8eef8;
+  --border:#dce5f2;
+  --blue:#0d47a1;
+  --blue2:#1565c0;
+  --blue3:#1976d2;
+  --teal:#00796b;
+  --green:#2e7d32;
+  --green2:#388e3c;
+  --amber:#e65100;
+  --amber2:#f57c00;
+  --red:#c62828;
+  --red2:#d32f2f;
+  --purple:#6a1b9a;
+  --purple2:#7b1fa2;
+  --orange:#bf360c;
+  --cyan:#006064;
+  --text:#0d1b3e;
+  --text2:#3d5480;
+  --text3:#7a90b8;
+  --white:#ffffff;
+}
+
+body {
+  font-family:'IBM Plex Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+}
+
+/* ── HEADER ── */
+.header {
+  background:var(--white);
+  border-bottom:2px solid var(--border);
+  padding:0 32px;
+  display:flex;
+  align-items:stretch;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:200;
+  box-shadow:0 2px 12px rgba(13,71,161,.08);
+}
+.header-left {
+  padding:18px 0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.header-title {
+  font-family:'Syne',sans-serif;
+  font-size:22px;
+  font-weight:800;
+  color:var(--blue);
+  letter-spacing:-.5px;
+}
+.header-sub {
+  font-size:12px;
+  color:var(--text3);
+  margin-top:2px;
+  font-weight:400;
+}
+.header-right {
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.badge {
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 14px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:600;
+  font-family:'IBM Plex Mono',monospace;
+}
+.badge-green { background:#e8f5e9; color:var(--green); border:1px solid #a5d6a7; }
+.badge-blue  { background:#e3f2fd; color:var(--blue2); border:1px solid #90caf9; }
+.badge-dot {
+  width:7px; height:7px; border-radius:50%;
+  animation:pulse 2s infinite;
+}
+.badge-green .badge-dot { background:var(--green2); }
+.badge-blue  .badge-dot { background:var(--blue3); }
+@keyframes pulse {
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.5;transform:scale(.8)}
+}
+
+/* ── ALERT BANNER ── */
+.alert-banner {
+  background:#fff8f0;
+  border-bottom:2px solid #ff8f00;
+  border-left:6px solid #ff8f00;
+  padding:12px 32px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:13px;
+  color:#5d2e00;
+  animation:slideDown .4s ease;
+}
+@keyframes slideDown {
+  from{transform:translateY(-20px);opacity:0}
+  to{transform:translateY(0);opacity:1}
+}
+.alert-banner .icon { font-size:18px; flex-shrink:0; }
+.alert-banner strong { color:#e65100; font-weight:600; }
+
+/* ── NAV TABS ── */
+.nav-tabs {
+  background:var(--white);
+  border-bottom:1px solid var(--border);
+  padding:0 32px;
+  display:flex;
+  gap:0;
+}
+.tab-btn {
+  padding:14px 24px;
+  font-family:'IBM Plex Sans',sans-serif;
+  font-size:13px;
+  font-weight:500;
+  color:var(--text3);
+  background:none;
+  border:none;
+  border-bottom:3px solid transparent;
+  margin-bottom:-1px;
+  cursor:pointer;
+  transition:all .2s;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.tab-btn:hover { color:var(--blue); }
+.tab-btn.active {
+  color:var(--blue);
+  border-bottom-color:var(--blue);
+  font-weight:600;
+}
+.tab-icon { font-size:15px; }
+
+/* ── MAIN CONTENT ── */
+.main { padding:24px 32px 48px; }
+
+/* ── HERO KPIS ── */
+.kpi-row {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin-bottom:20px;
+}
+.kpi-card {
+  border-radius:14px;
+  padding:22px 24px 20px;
+  color:white;
+  cursor:pointer;
+  transition:transform .2s, box-shadow .2s;
+  position:relative;
+  overflow:hidden;
+}
+.kpi-card::after {
+  content:'';
+  position:absolute;
+  top:-30%;right:-10%;
+  width:160px;height:160px;
+  border-radius:50%;
+  background:rgba(255,255,255,.1);
+  pointer-events:none;
+}
+.kpi-card:hover { transform:translateY(-3px); box-shadow:0 12px 32px rgba(0,0,0,.18); }
+.kpi-card.green  { background:linear-gradient(135deg,#2e7d32,#43a047); }
+.kpi-card.teal   { background:linear-gradient(135deg,#006064,#00838f); }
+.kpi-card.purple { background:linear-gradient(135deg,#6a1b9a,#8e24aa); }
+.kpi-card.orange { background:linear-gradient(135deg,#bf360c,#e64a19); }
+.kpi-label {
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:1.2px;
+  text-transform:uppercase;
+  opacity:.85;
+  margin-bottom:10px;
+}
+.kpi-value {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:34px;
+  font-weight:700;
+  letter-spacing:-1px;
+  line-height:1;
+  margin-bottom:8px;
+}
+.kpi-sub {
+  font-size:12px;
+  opacity:.8;
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+.kpi-drill {
+  position:absolute;
+  bottom:14px; right:16px;
+  font-size:11px;
+  opacity:.6;
+  font-family:'IBM Plex Mono',monospace;
+}
+
+/* ── CONTENT TABS ── */
+.tab-content { display:none; }
+.tab-content.active { display:block; animation:fadeIn .3s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── GRID LAYOUTS ── */
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:16px; }
+.grid-2-1 { display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:16px; }
+.grid-1-2 { display:grid; grid-template-columns:1fr 2fr; gap:16px; margin-bottom:16px; }
+
+/* ── CARD ── */
+.card {
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+  transition:box-shadow .2s;
+}
+.card:hover { box-shadow:0 4px 20px rgba(13,71,161,.08); }
+.card-header {
+  padding:16px 20px 0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:4px;
+}
+.card-title {
+  font-family:'Syne',sans-serif;
+  font-size:13px;
+  font-weight:700;
+  color:var(--text);
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+.card-sub {
+  font-size:11px;
+  color:var(--text3);
+}
+.card-body { padding:14px 20px 20px; }
+.chart-wrap { position:relative; }
+
+/* ── METRIC BARS ── */
+.metric-item {
+  margin-bottom:18px;
+  cursor:pointer;
+  padding:10px 14px;
+  border-radius:8px;
+  transition:background .15s;
+}
+.metric-item:hover { background:var(--surf2); }
+.metric-item:last-child { margin-bottom:0; }
+.metric-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:8px;
+}
+.metric-name {
+  font-size:13px;
+  font-weight:500;
+  color:var(--text);
+}
+.metric-val {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:18px;
+  font-weight:700;
+  color:var(--text);
+}
+.metric-target {
+  font-size:11px;
+  color:var(--text3);
+  margin-left:6px;
+}
+.bar-track {
+  height:8px;
+  background:var(--surf3);
+  border-radius:4px;
+  overflow:hidden;
+}
+.bar-fill {
+  height:100%;
+  border-radius:4px;
+  transition:width 1s cubic-bezier(.4,0,.2,1);
+}
+.bar-green { background:linear-gradient(90deg,#43a047,#66bb6a); }
+.bar-teal  { background:linear-gradient(90deg,#00838f,#26c6da); }
+.bar-amber { background:linear-gradient(90deg,#f57c00,#ffa726); }
+.bar-red   { background:linear-gradient(90deg,#d32f2f,#ef5350); }
+.metric-badges {
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-top:6px;
+}
+.chip {
+  padding:3px 10px;
+  border-radius:10px;
+  font-size:11px;
+  font-weight:600;
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+}
+.chip-green  { background:#e8f5e9; color:var(--green); }
+.chip-amber  { background:#fff3e0; color:var(--amber); }
+.chip-red    { background:#ffebee; color:var(--red2); }
+.chip-blue   { background:#e3f2fd; color:var(--blue2); }
+.chip-purple { background:#f3e5f5; color:var(--purple2); }
+
+/* ── ALERTS PANEL ── */
+.alerts-panel {
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+}
+.alerts-header {
+  background:linear-gradient(135deg,#c62828,#e53935);
+  padding:14px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.alerts-title {
+  font-family:'Syne',sans-serif;
+  font-size:14px;
+  font-weight:800;
+  color:white;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.alerts-sub { font-size:11px; color:rgba(255,255,255,.75); }
+.alert-item {
+  padding:14px 20px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  cursor:pointer;
+  transition:background .15s;
+}
+.alert-item:hover { background:var(--surf2); }
+.alert-item:last-child { border-bottom:none; }
+.alert-dot {
+  width:10px; height:10px;
+  border-radius:50%;
+  flex-shrink:0;
+  margin-top:4px;
+}
+.dot-red    { background:var(--red2); box-shadow:0 0 0 3px rgba(211,47,47,.2); }
+.dot-amber  { background:var(--amber2); box-shadow:0 0 0 3px rgba(245,124,0,.2); }
+.dot-blue   { background:var(--blue3); box-shadow:0 0 0 3px rgba(25,118,210,.2); }
+.dot-green  { background:var(--green2); box-shadow:0 0 0 3px rgba(56,142,60,.2); }
+.alert-content { flex:1; }
+.alert-title-text {
+  font-size:13px;
+  font-weight:600;
+  color:var(--text);
+  margin-bottom:2px;
+}
+.alert-msg { font-size:12px; color:var(--text2); line-height:1.5; }
+.alert-time { font-size:11px; color:var(--text3); font-family:'IBM Plex Mono',monospace; white-space:nowrap; }
+.alert-badge {
+  display:inline-block;
+  padding:2px 8px;
+  border-radius:6px;
+  font-size:10px;
+  font-weight:700;
+  margin-bottom:3px;
+}
+.ab-red    { background:#ffebee; color:var(--red2); }
+.ab-amber  { background:#fff3e0; color:var(--amber); }
+.ab-blue   { background:#e3f2fd; color:var(--blue2); }
+
+/* ── DATA TABLE ── */
+.data-table { width:100%; border-collapse:collapse; font-size:13px; }
+.data-table th {
+  background:var(--surf2);
+  padding:10px 14px;
+  text-align:left;
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  color:var(--text2);
+  border-bottom:2px solid var(--border);
+}
+.data-table td {
+  padding:11px 14px;
+  border-bottom:1px solid var(--surf3);
+  color:var(--text);
+  transition:background .12s;
+}
+.data-table tr:hover td { background:#f0f7ff; cursor:pointer; }
+.data-table tr:last-child td { border-bottom:none; }
+.status-pill {
+  padding:3px 10px;
+  border-radius:10px;
+  font-size:11px;
+  font-weight:600;
+  display:inline-block;
+}
+.pill-green  { background:#e8f5e9; color:#2e7d32; }
+.pill-amber  { background:#fff3e0; color:#e65100; }
+.pill-red    { background:#ffebee; color:#c62828; }
+.pill-blue   { background:#e3f2fd; color:#1565c0; }
+.pill-purple { background:#f3e5f5; color:#6a1b9a; }
+
+/* ── SUMMARY STATS ── */
+.stat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.stat-box {
+  background:var(--surf2);
+  border-radius:10px;
+  padding:16px;
+  text-align:center;
+  border:1px solid var(--border);
+  cursor:pointer;
+  transition:all .2s;
+}
+.stat-box:hover { background:var(--blue); color:white; transform:translateY(-2px); }
+.stat-box:hover .stat-num { color:white; }
+.stat-box:hover .stat-lbl { color:rgba(255,255,255,.8); }
+.stat-num {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:22px;
+  font-weight:700;
+  color:var(--blue);
+  display:block;
+  margin-bottom:4px;
+}
+.stat-lbl { font-size:11px; color:var(--text3); }
+
+/* ── DRILL DOWN MODAL ── */
+.modal-overlay {
+  position:fixed;
+  inset:0;
+  background:rgba(13,27,62,.6);
+  backdrop-filter:blur(4px);
+  z-index:1000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+.modal-overlay.open { display:flex; animation:fadeIn .25s ease; }
+.modal {
+  background:var(--white);
+  border-radius:16px;
+  width:100%;
+  max-width:860px;
+  max-height:88vh;
+  overflow-y:auto;
+  box-shadow:0 24px 64px rgba(13,27,62,.25);
+}
+.modal-header {
+  padding:20px 28px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  background:var(--white);
+  z-index:10;
+}
+.modal-title {
+  font-family:'Syne',sans-serif;
+  font-size:18px;
+  font-weight:800;
+  color:var(--blue);
+}
+.modal-close {
+  background:var(--surf2);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:6px 16px;
+  font-family:'IBM Plex Sans',sans-serif;
+  font-size:13px;
+  cursor:pointer;
+  color:var(--text2);
+  transition:all .15s;
+}
+.modal-close:hover { background:var(--red2); color:white; border-color:var(--red2); }
+.modal-body { padding:24px 28px; }
+.modal-kpi-row {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-bottom:20px;
+}
+.modal-kpi {
+  background:var(--surf2);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:14px 16px;
+}
+.modal-kpi-val {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:20px;
+  font-weight:700;
+  color:var(--blue);
+  display:block;
+  margin-bottom:2px;
+}
+.modal-kpi-lbl { font-size:11px; color:var(--text3); }
+
+/* ── MINI CHART ── */
+.mini-chart-wrap { position:relative; height:200px; }
+.trend-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
+
+/* ── PROGRESS CIRCLE ── */
+.circle-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px; }
+.circle-item { text-align:center; }
+.circle-svg { display:block; margin:0 auto 8px; }
+.circle-label { font-size:12px; color:var(--text2); font-weight:500; }
+.circle-val { font-family:'IBM Plex Mono',monospace; font-size:16px; font-weight:700; color:var(--text); }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width:6px; height:6px; }
+::-webkit-scrollbar-track { background:var(--surf2); }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+::-webkit-scrollbar-thumb:hover { background:var(--text3); }
+
+/* ── SECTION LABELS ── */
+.section-label {
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+  color:var(--text3);
+  margin-bottom:12px;
+  margin-top:4px;
+}
+
+/* ── INSIGHT BOX ── */
+.insight-box {
+  background:linear-gradient(135deg,#e3f2fd,#f3e5f5);
+  border:1px solid #b3d4fc;
+  border-left:4px solid var(--blue);
+  border-radius:8px;
+  padding:14px 18px;
+  margin-bottom:16px;
+  font-size:13px;
+  color:var(--text2);
+  line-height:1.6;
+}
+.insight-box strong { color:var(--blue); }
+
+/* ── RISK MATRIX ── */
+.risk-row {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 14px;
+  border-radius:8px;
+  margin-bottom:8px;
+  border:1px solid var(--border);
+  cursor:pointer;
+  transition:all .15s;
+}
+.risk-row:hover { transform:translateX(4px); box-shadow:2px 0 0 0 var(--blue); }
+.risk-icon { font-size:20px; flex-shrink:0; }
+.risk-info { flex:1; }
+.risk-title { font-size:13px; font-weight:600; color:var(--text); }
+.risk-desc  { font-size:12px; color:var(--text3); margin-top:2px; }
+.risk-level {
+  padding:4px 12px;
+  border-radius:8px;
+  font-size:11px;
+  font-weight:700;
+  white-space:nowrap;
+}
+.rl-critical { background:#ffebee; color:var(--red2); }
+.rl-high     { background:#fff3e0; color:var(--amber); }
+.rl-medium   { background:#e3f2fd; color:var(--blue2); }
+.rl-low      { background:#e8f5e9; color:var(--green2); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="header-title">Domo Pharma Intelligence</div>
+    <div class="header-sub">SFDA Compliance & Operational Excellence Dashboard · Saudi Arabia</div>
+  </div>
+  <div class="header-right">
+    <div class="badge badge-green"><div class="badge-dot"></div>RSD Connected</div>
+    <div class="badge badge-blue"><div class="badge-dot"></div>Last Updated: 2 mins ago</div>
+    <div class="badge badge-blue" style="background:#e8f5e9;color:#2e7d32;border-color:#a5d6a7">📅 May 2025</div>
+  </div>
+</div>
+
+<!-- ALERT BANNER -->
+<div class="alert-banner">
+  <div class="icon">⚠️</div>
+  <div>
+    <strong>SFDA Compliance Notice:</strong>
+    Recent SAR 4M in penalties issued to 19 pharmaceutical companies for RSD non-compliance (May 2025).
+    Ensure your Track &amp; Trace systems are fully operational. <strong>Your current compliance rate: 98.7% — Excellent.</strong>
+  </div>
+</div>
+
+<!-- NAV TABS -->
+<div class="nav-tabs">
+  <button class="tab-btn active" onclick="switchTab('sfda',this)"><span class="tab-icon">🛡️</span>SFDA Compliance</button>
+  <button class="tab-btn" onclick="switchTab('pharmacy',this)"><span class="tab-icon">💊</span>Pharmacy Ops</button>
+  <button class="tab-btn" onclick="switchTab('supply',this)"><span class="tab-icon">🚚</span>Supply Chain</button>
+  <button class="tab-btn" onclick="switchTab('financial',this)"><span class="tab-icon">💰</span>Financial</button>
+  <button class="tab-btn" onclick="switchTab('risk',this)"><span class="tab-icon">⚡</span>Risk Analysis</button>
+</div>
+
+<div class="main">
+
+  <!-- HERO KPI ROW -->
+  <div class="kpi-row">
+    <div class="kpi-card green" onclick="openDrill('sfda-compliance')">
+      <div class="kpi-label">SFDA Compliance Rate</div>
+      <div class="kpi-value">98.7%</div>
+      <div class="kpi-sub">↑ +2.3% from last month</div>
+      <div class="kpi-drill">click to drill ↗</div>
+    </div>
+    <div class="kpi-card teal" onclick="openDrill('near-expiry')">
+      <div class="kpi-label">Near-Expiry Items</div>
+      <div class="kpi-value">247</div>
+      <div class="kpi-sub">⚠ Requires attention</div>
+      <div class="kpi-drill">click to drill ↗</div>
+    </div>
+    <div class="kpi-card purple" onclick="openDrill('cost-savings')">
+      <div class="kpi-label">Cost Savings</div>
+      <div class="kpi-value">SAR 2.4M</div>
+      <div class="kpi-sub">↑ This quarter</div>
+      <div class="kpi-drill">click to drill ↗</div>
+    </div>
+    <div class="kpi-card orange" onclick="openDrill('inventory')">
+      <div class="kpi-label">Inventory Turnover</div>
+      <div class="kpi-value">12.4x</div>
+      <div class="kpi-sub">↑ Industry leading</div>
+      <div class="kpi-drill">click to drill ↗</div>
+    </div>
+  </div>
+
+  <!-- ══════════ TAB 1: SFDA COMPLIANCE ══════════ -->
+  <div class="tab-content active" id="tab-sfda">
+    <div class="grid-2-1">
+      <div>
+        <div class="grid-2">
+          <!-- Drugs Serialized -->
+          <div class="card" onclick="openDrill('drugs-serialized')" style="cursor:pointer">
+            <div class="card-header">
+              <div class="card-title">Drugs Serialized</div>
+              <span class="chip chip-green">✓ Excellent</span>
+            </div>
+            <div class="card-body">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:32px;font-weight:700;color:var(--text);margin-bottom:12px">98.7%</div>
+              <div class="bar-track"><div class="bar-fill bar-green" style="width:98.7%"></div></div>
+              <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--text3)"><span>Target: 100%</span><span>98,700 of 100,000 batches</span></div>
+              <div class="metric-badges" style="margin-top:10px">
+                <span class="chip chip-blue">1,300 pending sync</span>
+                <span class="chip chip-green">Trend: ↑</span>
+              </div>
+            </div>
+          </div>
+          <!-- RSD Sync Success -->
+          <div class="card" onclick="openDrill('rsd-sync')" style="cursor:pointer">
+            <div class="card-header">
+              <div class="card-title">RSD Sync Success</div>
+              <span class="chip chip-green">✓ Good</span>
+            </div>
+            <div class="card-body">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:32px;font-weight:700;color:var(--text);margin-bottom:12px">96.3%</div>
+              <div class="bar-track"><div class="bar-fill bar-teal" style="width:96.3%"></div></div>
+              <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--text3)"><span>Target: 99%</span><span>3.7% sync failures</span></div>
+              <div class="metric-badges" style="margin-top:10px">
+                <span class="chip chip-amber">Batch #B2025-847 failed</span>
+              </div>
+            </div>
+          </div>
+          <!-- Failed Batches -->
+          <div class="card" onclick="openDrill('failed-batches')" style="cursor:pointer">
+            <div class="card-header">
+              <div class="card-title">Failed Batches</div>
+              <span class="chip chip-amber">⚠ Needs Attention</span>
+            </div>
+            <div class="card-body">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:32px;font-weight:700;color:var(--amber);margin-bottom:12px">2.1%</div>
+              <div class="bar-track"><div class="bar-fill bar-amber" style="width:20%"></div></div>
+              <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--text3)"><span>Threshold: 1.5%</span><span>21 of 1,000 batches</span></div>
+              <div class="metric-badges" style="margin-top:10px">
+                <span class="chip chip-red">Above threshold</span>
+                <span class="chip chip-amber">↑ +0.3% vs last month</span>
+              </div>
+            </div>
+          </div>
+          <!-- Audit Readiness -->
+          <div class="card" onclick="openDrill('audit-readiness')" style="cursor:pointer">
+            <div class="card-header">
+              <div class="card-title">Audit Readiness</div>
+              <span class="chip chip-green">✓ Excellent</span>
+            </div>
+            <div class="card-body">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:32px;font-weight:700;color:var(--text);margin-bottom:12px">94.8%</div>
+              <div class="bar-track"><div class="bar-fill bar-green" style="width:94.8%"></div></div>
+              <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--text3)"><span>Target: 95%</span><span>Just below target</span></div>
+              <div class="metric-badges" style="margin-top:10px">
+                <span class="chip chip-blue">Next audit: Jun 15</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Compliance Trend Chart -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Compliance Rate — 12-Month Trend</div>
+            <div class="card-sub">vs 97% SFDA minimum threshold</div>
+          </div>
+          <div class="card-body">
+            <div class="chart-wrap" style="height:200px"><canvas id="complianceTrendChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alerts Panel -->
+      <div>
+        <div class="alerts-panel">
+          <div class="alerts-header">
+            <div class="alerts-title">🔔 Critical Alerts<div class="alerts-sub">Immediate attention required</div></div>
+            <span style="background:rgba(255,255,255,.2);color:white;padding:3px 10px;border-radius:10px;font-size:12px;font-weight:700">3 Active</span>
+          </div>
+          <div class="alert-item" onclick="openDrill('alert-sfda')">
+            <div class="alert-dot dot-red"></div>
+            <div class="alert-content">
+              <div><span class="alert-badge ab-red">SFDA Compliance</span><span class="alert-time" style="margin-left:8px">2 hours ago</span></div>
+              <div class="alert-title-text">Batch #B2025-847 RSD sync failed</div>
+              <div class="alert-msg">Metformin 500mg · Lot B2025-847 · Serialization mismatch detected</div>
+            </div>
+          </div>
+          <div class="alert-item" onclick="openDrill('alert-coldchain')">
+            <div class="alert-dot dot-amber"></div>
+            <div class="alert-content">
+              <div><span class="alert-badge ab-amber">Cold Chain</span><span class="alert-time" style="margin-left:8px">45 mins ago</span></div>
+              <div class="alert-title-text">Temperature breach in shipment SCH-1851</div>
+              <div class="alert-msg">Insulin products at risk · Temp: 9.4°C (limit: 8°C) · Riyadh Hub</div>
+            </div>
+          </div>
+          <div class="alert-item" onclick="openDrill('alert-stockout')">
+            <div class="alert-dot dot-amber"></div>
+            <div class="alert-content">
+              <div><span class="alert-badge ab-amber">Stockout</span><span class="alert-time" style="margin-left:8px">1 hour ago</span></div>
+              <div class="alert-title-text">Metformin 500mg critically low</div>
+              <div class="alert-msg">12 units remaining · Avg daily usage: 48 units · 0.25 days cover</div>
+            </div>
+          </div>
+          <div class="alert-item" onclick="openDrill('alert-expiry')">
+            <div class="alert-dot dot-blue"></div>
+            <div class="alert-content">
+              <div><span class="alert-badge ab-blue">Near Expiry</span><span class="alert-time" style="margin-left:8px">3 hours ago</span></div>
+              <div class="alert-title-text">14 SKUs expiring within 30 days</div>
+              <div class="alert-msg">Highest risk: Amoxicillin 250mg · 840 units · Expires Jun 2</div>
+            </div>
+          </div>
+          <div class="alert-item" onclick="openDrill('alert-audit')">
+            <div class="alert-dot dot-blue"></div>
+            <div class="alert-content">
+              <div><span class="alert-badge ab-blue">Audit Reminder</span><span class="alert-time" style="margin-left:8px">6 hours ago</span></div>
+              <div class="alert-title-text">SFDA Audit scheduled June 15</div>
+              <div class="alert-msg">21 days remaining · Audit readiness: 94.8% · 5 documentation gaps</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Industry Benchmark -->
+        <div class="card" style="margin-top:16px">
+          <div class="card-header"><div class="card-title">Industry Benchmark</div><div class="card-sub">vs Saudi Pharma Sector</div></div>
+          <div class="card-body">
+            <div class="chart-wrap" style="height:180px"><canvas id="benchmarkChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ TAB 2: PHARMACY OPS ══════════ -->
+  <div class="tab-content" id="tab-pharmacy">
+    <div class="insight-box">
+      <strong>Pharmacy Operations Summary:</strong> 247 near-expiry SKUs requiring action. Stockout frequency has increased 18% this month driven by Metformin supply issues. Controlled drug tracking at 100% — no discrepancies detected.
+    </div>
+    <div class="grid-2-1">
+      <div>
+        <div class="grid-2">
+          <div class="card" onclick="openDrill('near-expiry-detail')">
+            <div class="card-header"><div class="card-title">Near-Expiry by Category</div></div>
+            <div class="card-body">
+              <div class="chart-wrap" style="height:200px"><canvas id="nearExpiryChart"></canvas></div>
+            </div>
+          </div>
+          <div class="card" onclick="openDrill('stockout-detail')">
+            <div class="card-header"><div class="card-title">Stock Status Overview</div></div>
+            <div class="card-body">
+              <div class="chart-wrap" style="height:200px"><canvas id="stockStatusChart"></canvas></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Near-Expiry Items — Top 10 Priority</div><div class="card-sub">Click any row for detail</div></div>
+          <div class="card-body" style="padding:0">
+            <table class="data-table">
+              <thead><tr><th>Drug Name</th><th>Units</th><th>Expiry Date</th><th>Days Left</th><th>Category</th><th>Action</th></tr></thead>
+              <tbody id="nearExpiryTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card" onclick="openDrill('controlled-drugs')">
+          <div class="card-header"><div class="card-title">Controlled Drug Tracking</div></div>
+          <div class="card-body">
+            <div class="stat-grid">
+              <div class="stat-box"><span class="stat-num">100%</span><span class="stat-lbl">Tracking Rate</span></div>
+              <div class="stat-box"><span class="stat-num">0</span><span class="stat-lbl">Discrepancies</span></div>
+              <div class="stat-box"><span class="stat-num">1,284</span><span class="stat-lbl">SKUs Monitored</span></div>
+            </div>
+            <div style="margin-top:14px">
+              <div class="metric-item" onclick="openDrill('narcotics')">
+                <div class="metric-header"><span class="metric-name">Narcotics & Opioids</span><span><span class="metric-val">48</span><span class="metric-target">SKUs</span></span></div>
+                <div class="bar-track"><div class="bar-fill bar-green" style="width:100%"></div></div>
+                <div class="metric-badges"><span class="chip chip-green">✓ All reconciled</span></div>
+              </div>
+              <div class="metric-item" onclick="openDrill('psychotropics')">
+                <div class="metric-header"><span class="metric-name">Psychotropics</span><span><span class="metric-val">124</span><span class="metric-target">SKUs</span></span></div>
+                <div class="bar-track"><div class="bar-fill bar-green" style="width:100%"></div></div>
+                <div class="metric-badges"><span class="chip chip-green">✓ All reconciled</span></div>
+              </div>
+              <div class="metric-item" onclick="openDrill('antibiotics')">
+                <div class="metric-header"><span class="metric-name">High-Alert Medications</span><span><span class="metric-val">312</span><span class="metric-target">SKUs</span></span></div>
+                <div class="bar-track"><div class="bar-fill bar-green" style="width:100%"></div></div>
+                <div class="metric-badges"><span class="chip chip-blue">Last audit: 4 hrs ago</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <div class="card-header"><div class="card-title">Dispensing Performance</div><div class="card-sub">Today vs 30-day avg</div></div>
+          <div class="card-body">
+            <div class="chart-wrap" style="height:200px"><canvas id="dispensingChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ TAB 3: SUPPLY CHAIN ══════════ -->
+  <div class="tab-content" id="tab-supply">
+    <div class="insight-box">
+      <strong>Supply Chain Health:</strong> Cold chain integrity at 97.2% — one active breach (SCH-1851, Insulin, Riyadh Hub). 3 vendors flagged for delivery SLA non-compliance. Inventory turnover 12.4x — industry-leading. Total active POs: 48.
+    </div>
+    <div class="grid-3">
+      <div class="card" onclick="openDrill('cold-chain-detail')">
+        <div class="card-header"><div class="card-title">Cold Chain Integrity</div></div>
+        <div class="card-body">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:700;color:var(--green);margin-bottom:8px">97.2%</div>
+          <div class="bar-track"><div class="bar-fill bar-green" style="width:97.2%"></div></div>
+          <div style="font-size:12px;color:var(--text3);margin-top:6px">1 active breach · Target: 99%</div>
+          <div class="metric-badges" style="margin-top:10px">
+            <span class="chip chip-red">SCH-1851: 9.4°C</span>
+            <span class="chip chip-green">48 in-range</span>
+          </div>
+          <div style="margin-top:14px">
+            <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px">Temperature Zones</div>
+            <div class="metric-item" style="margin-bottom:6px">
+              <div class="metric-header"><span style="font-size:12px">2–8°C (Refrigerated)</span><span class="chip chip-green" style="font-size:11px">97.8%</span></div>
+              <div class="bar-track"><div class="bar-fill bar-green" style="width:97.8%"></div></div>
+            </div>
+            <div class="metric-item" style="margin-bottom:6px">
+              <div class="metric-header"><span style="font-size:12px">15–25°C (Ambient)</span><span class="chip chip-green" style="font-size:11px">99.1%</span></div>
+              <div class="bar-track"><div class="bar-fill bar-green" style="width:99.1%"></div></div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-header"><span style="font-size:12px">-20°C (Frozen)</span><span class="chip chip-amber" style="font-size:11px">94.2%</span></div>
+              <div class="bar-track"><div class="bar-fill bar-amber" style="width:94.2%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card" onclick="openDrill('vendor-sla')">
+        <div class="card-header"><div class="card-title">Vendor SLA Performance</div></div>
+        <div class="card-body">
+          <div class="chart-wrap" style="height:220px"><canvas id="vendorChart"></canvas></div>
+        </div>
+      </div>
+      <div class="card" onclick="openDrill('delivery-times')">
+        <div class="card-header"><div class="card-title">Delivery Time Analysis</div></div>
+        <div class="card-body">
+          <div class="stat-grid" style="grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+            <div class="stat-box"><span class="stat-num">2.4</span><span class="stat-lbl">Avg Lead Days</span></div>
+            <div class="stat-box"><span class="stat-num">48</span><span class="stat-lbl">Active POs</span></div>
+            <div class="stat-box"><span class="stat-num">94.6%</span><span class="stat-lbl">On-Time Rate</span></div>
+            <div class="stat-box"><span class="stat-num">3</span><span class="stat-lbl">SLA Breaches</span></div>
+          </div>
+          <div class="chart-wrap" style="height:130px"><canvas id="deliveryChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Vendor Performance Matrix</div><div class="card-sub">Click vendor to see full profile</div></div>
+      <div class="card-body" style="padding:0">
+        <table class="data-table">
+          <thead><tr><th>Vendor</th><th>Category</th><th>On-Time %</th><th>Quality Score</th><th>Active POs</th><th>Avg Lead Days</th><th>SLA Status</th></tr></thead>
+          <tbody id="vendorTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ TAB 4: FINANCIAL ══════════ -->
+  <div class="tab-content" id="tab-financial">
+    <div class="insight-box">
+      <strong>Financial Performance Q2 2025:</strong> SAR 2.4M in cost savings achieved through waste reduction and improved inventory management. Expiry-related losses down 34% vs Q1. Cost per prescription reduced from SAR 48.2 to SAR 44.6.
+    </div>
+    <div class="grid-2">
+      <div class="card" onclick="openDrill('cost-savings-detail')">
+        <div class="card-header"><div class="card-title">Cost Savings Breakdown — Q2 2025</div><div class="card-sub">SAR 2.4M Total</div></div>
+        <div class="card-body">
+          <div class="chart-wrap" style="height:240px"><canvas id="savingsChart"></canvas></div>
+        </div>
+      </div>
+      <div class="card" onclick="openDrill('expiry-losses')">
+        <div class="card-header"><div class="card-title">Expiry Loss Trend</div><div class="card-sub">Monthly SAR loss from expired stock</div></div>
+        <div class="card-body">
+          <div class="chart-wrap" style="height:240px"><canvas id="expiryLossChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+    <div class="grid-3">
+      <div class="card" onclick="openDrill('procurement')">
+        <div class="card-header"><div class="card-title">Procurement Trends</div></div>
+        <div class="card-body">
+          <div class="stat-grid" style="grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+            <div class="stat-box"><span class="stat-num">SAR 8.4M</span><span class="stat-lbl">MTD Spend</span></div>
+            <div class="stat-box"><span class="stat-num">↓ 6.2%</span><span class="stat-lbl">vs Last Month</span></div>
+            <div class="stat-box"><span class="stat-num">48</span><span class="stat-lbl">Active POs</span></div>
+            <div class="stat-box"><span class="stat-num">SAR 44.6</span><span class="stat-lbl">Cost / Rx</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="card" onclick="openDrill('cost-per-rx')">
+        <div class="card-header"><div class="card-title">Cost per Prescription</div><div class="card-sub">Monthly trend</div></div>
+        <div class="card-body">
+          <div class="chart-wrap" style="height:160px"><canvas id="costPerRxChart"></canvas></div>
+        </div>
+      </div>
+      <div class="card" onclick="openDrill('vendor-reliability')">
+        <div class="card-header"><div class="card-title">Vendor Reliability Score</div></div>
+        <div class="card-body">
+          <div class="chart-wrap" style="height:160px"><canvas id="vendorReliabilityChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ TAB 5: RISK ANALYSIS ══════════ -->
+  <div class="tab-content" id="tab-risk">
+    <div class="insight-box">
+      <strong>Risk Assessment Summary:</strong> 2 Critical risks require immediate action (RSD sync failures + cold chain breach). 3 High risks under monitoring. Overall risk score: 6.8/10 — Moderate. Primary exposure: SFDA regulatory penalties estimated at SAR 800K if current batch failures persist.
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Risk Register</div><div class="card-sub">Click any risk for mitigation plan</div></div>
+        <div class="card-body">
+          <div class="risk-row" onclick="openDrill('risk-rsd')">
+            <div class="risk-icon">🔴</div>
+            <div class="risk-info">
+              <div class="risk-title">RSD Sync Failure Rate Above Threshold</div>
+              <div class="risk-desc">3.7% failure rate vs 1% threshold. 21 batches pending. Potential SFDA penalty: SAR 200K–800K</div>
+            </div>
+            <div class="risk-level rl-critical">CRITICAL</div>
+          </div>
+          <div class="risk-row" onclick="openDrill('risk-coldchain')">
+            <div class="risk-icon">🟠</div>
+            <div class="risk-info">
+              <div class="risk-title">Cold Chain Integrity Breach — Insulin Products</div>
+              <div class="risk-desc">Shipment SCH-1851 at 9.4°C. Product recall risk if threshold exceeded for >2hrs. Est. loss: SAR 45K</div>
+            </div>
+            <div class="risk-level rl-critical">CRITICAL</div>
+          </div>
+          <div class="risk-row" onclick="openDrill('risk-stockout')">
+            <div class="risk-icon">🟡</div>
+            <div class="risk-info">
+              <div class="risk-title">Metformin 500mg Stockout Imminent</div>
+              <div class="risk-desc">12 units remaining. 0.25 days cover. Emergency PO required within 4 hours. Patient safety risk.</div>
+            </div>
+            <div class="risk-level rl-high">HIGH</div>
+          </div>
+          <div class="risk-row" onclick="openDrill('risk-audit')">
+            <div class="risk-icon">🟡</div>
+            <div class="risk-info">
+              <div class="risk-title">SFDA Audit Readiness Gap</div>
+              <div class="risk-desc">94.8% readiness vs 95% target. 5 documentation gaps. Audit in 21 days. Risk: Conditional pass.</div>
+            </div>
+            <div class="risk-level rl-high">HIGH</div>
+          </div>
+          <div class="risk-row" onclick="openDrill('risk-vendor')">
+            <div class="risk-icon">🔵</div>
+            <div class="risk-info">
+              <div class="risk-title">3 Vendor SLA Non-Compliance</div>
+              <div class="risk-desc">Al-Dawaa, Gulf Medical, Med-Supply KSA below 90% on-time. Contract review required Q3.</div>
+            </div>
+            <div class="risk-level rl-medium">MEDIUM</div>
+          </div>
+          <div class="risk-row" onclick="openDrill('risk-expiry')">
+            <div class="risk-icon">🔵</div>
+            <div class="risk-info">
+              <div class="risk-title">247 SKUs Near-Expiry</div>
+              <div class="risk-desc">14 SKUs expiring within 30 days. Estimated write-off exposure: SAR 124K if not actioned.</div>
+            </div>
+            <div class="risk-level rl-medium">MEDIUM</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-header"><div class="card-title">Risk Score Trend</div><div class="card-sub">12-month overall risk score (lower is better)</div></div>
+          <div class="card-body">
+            <div class="chart-wrap" style="height:200px"><canvas id="riskTrendChart"></canvas></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Regulatory Penalty Exposure</div><div class="card-sub">Estimated SAR exposure by category</div></div>
+          <div class="card-body">
+            <div class="chart-wrap" style="height:200px"><canvas id="penaltyChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end main -->
+
+<!-- ══════════ DRILL-DOWN MODAL ══════════ -->
+<div class="modal-overlay" id="drillModal" onclick="closeDrillIfOverlay(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Detail View</div>
+      <button class="modal-close" onclick="closeDrill()">✕ Close</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+// ── TAB SWITCHING ──────────────────────────────────────────────────────────
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── DRILL DOWN ────────────────────────────────────────────────────────────
+const DRILLS = {
+  'sfda-compliance': {
+    title: 'SFDA Compliance Rate — Full Detail',
+    html: `
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val">98.7%</span><span class="modal-kpi-lbl">Current Rate</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">100%</span><span class="modal-kpi-lbl">SFDA Target</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">96.4%</span><span class="modal-kpi-lbl">Last Month</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">+2.3%</span><span class="modal-kpi-lbl">MoM Change</span></div>
+      </div>
+      <div class="insight-box"><strong>What this means:</strong> 98,700 out of 100,000 batches are fully serialized and compliant with SFDA Track & Trace requirements. The remaining 1,300 batches are pending RSD sync — primarily Metformin and Amoxicillin lines. At current improvement rate, 100% compliance is achievable within 2 months.</div>
+      <table class="data-table">
+        <thead><tr><th>Drug Category</th><th>Batches Total</th><th>Compliant</th><th>Pending</th><th>Compliance %</th><th>Risk</th></tr></thead>
+        <tbody>
+          <tr onclick="closeDrill()"><td>Antibiotics</td><td>28,400</td><td>28,400</td><td>0</td><td><span class="status-pill pill-green">100.0%</span></td><td><span class="status-pill pill-green">Low</span></td></tr>
+          <tr onclick="closeDrill()"><td>Antidiabetics</td><td>22,100</td><td>21,580</td><td>520</td><td><span class="status-pill pill-amber">97.6%</span></td><td><span class="status-pill pill-amber">Medium</span></td></tr>
+          <tr onclick="closeDrill()"><td>Cardiovascular</td><td>18,600</td><td>18,600</td><td>0</td><td><span class="status-pill pill-green">100.0%</span></td><td><span class="status-pill pill-green">Low</span></td></tr>
+          <tr onclick="closeDrill()"><td>Biologics & Insulin</td><td>14,200</td><td>13,580</td><td>620</td><td><span class="status-pill pill-amber">95.6%</span></td><td><span class="status-pill pill-red">High</span></td></tr>
+          <tr onclick="closeDrill()"><td>Pain Management</td><td>9,800</td><td>9,800</td><td>0</td><td><span class="status-pill pill-green">100.0%</span></td><td><span class="status-pill pill-green">Low</span></td></tr>
+          <tr onclick="closeDrill()"><td>Controlled Substances</td><td>7,400</td><td>7,240</td><td>160</td><td><span class="status-pill pill-amber">97.8%</span></td><td><span class="status-pill pill-amber">Medium</span></td></tr>
+          <tr onclick="closeDrill()"><td><strong>TOTAL</strong></td><td><strong>100,000</strong></td><td><strong>98,700</strong></td><td><strong>1,300</strong></td><td><span class="status-pill pill-green"><strong>98.7%</strong></span></td><td>—</td></tr>
+        </tbody>
+      </table>`
+  },
+  'near-expiry': {
+    title: 'Near-Expiry Items — 247 SKUs',
+    html: `
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val">247</span><span class="modal-kpi-lbl">Total SKUs</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">14</span><span class="modal-kpi-lbl">Expiring < 30 days</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">SAR 124K</span><span class="modal-kpi-lbl">Write-off Exposure</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">↓ 21%</span><span class="modal-kpi-lbl">vs Last Month (312)</span></div>
+      </div>
+      <div class="insight-box"><strong>Action Required:</strong> 14 SKUs expiring within 30 days. Recommended actions: (1) Transfer to high-throughput pharmacies within 48hrs, (2) Issue discount pricing for near-expiry items, (3) Emergency return to suppliers for 6 SKUs within return window.</div>
+      <table class="data-table">
+        <thead><tr><th>Drug Name</th><th>SKU</th><th>Units</th><th>Expiry</th><th>Days Left</th><th>Value SAR</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>Amoxicillin 250mg Cap</td><td>AMX-250-C</td><td>840</td><td>Jun 2, 2025</td><td><span class="status-pill pill-red">8 days</span></td><td>12,600</td><td><span class="status-pill pill-red">Urgent Transfer</span></td></tr>
+          <tr><td>Metformin 500mg Tab</td><td>MET-500-T</td><td>1,240</td><td>Jun 8, 2025</td><td><span class="status-pill pill-red">14 days</span></td><td>8,680</td><td><span class="status-pill pill-red">Urgent Sale</span></td></tr>
+          <tr><td>Atorvastatin 40mg</td><td>ATV-040-T</td><td>560</td><td>Jun 15, 2025</td><td><span class="status-pill pill-amber">21 days</span></td><td>22,400</td><td><span class="status-pill pill-amber">Discount Sale</span></td></tr>
+          <tr><td>Lisinopril 10mg</td><td>LIS-010-T</td><td>380</td><td>Jun 18, 2025</td><td><span class="status-pill pill-amber">24 days</span></td><td>7,600</td><td><span class="status-pill pill-amber">Transfer</span></td></tr>
+          <tr><td>Insulin Glargine 100U</td><td>INS-GLG-V</td><td>240</td><td>Jun 20, 2025</td><td><span class="status-pill pill-amber">26 days</span></td><td>48,000</td><td><span class="status-pill pill-red">Return to Supplier</span></td></tr>
+          <tr><td>Omeprazole 20mg Cap</td><td>OMP-020-C</td><td>920</td><td>Jun 25, 2025</td><td><span class="status-pill pill-blue">31 days</span></td><td>9,200</td><td><span class="status-pill pill-blue">Monitor</span></td></tr>
+        </tbody>
+      </table>`
+  },
+  'cost-savings': {
+    title: 'Cost Savings — SAR 2.4M Q2 2025',
+    html: `
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val">SAR 2.4M</span><span class="modal-kpi-lbl">Total Q2 Savings</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">SAR 1.1M</span><span class="modal-kpi-lbl">Waste Reduction</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">SAR 840K</span><span class="modal-kpi-lbl">Procurement Savings</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">SAR 460K</span><span class="modal-kpi-lbl">Efficiency Gains</span></div>
+      </div>
+      <div class="insight-box"><strong>Key drivers:</strong> Near-expiry prevention saved SAR 1.1M vs Q1 (↓ 34% write-offs). Vendor consolidation program reduced procurement costs by 8.4%. Domo automation eliminated 3.2 FTE equivalents in manual reporting (SAR 460K annualized).</div>
+      <table class="data-table">
+        <thead><tr><th>Savings Category</th><th>Q1 2025</th><th>Q2 2025</th><th>Change</th><th>Driver</th></tr></thead>
+        <tbody>
+          <tr><td>Near-expiry waste prevention</td><td>SAR 680K</td><td>SAR 1,100K</td><td><span class="status-pill pill-green">+62%</span></td><td>Domo near-expiry alerts + transfers</td></tr>
+          <tr><td>Procurement cost reduction</td><td>SAR 620K</td><td>SAR 840K</td><td><span class="status-pill pill-green">+35%</span></td><td>Vendor consolidation program</td></tr>
+          <tr><td>Operational efficiency</td><td>SAR 240K</td><td>SAR 460K</td><td><span class="status-pill pill-green">+92%</span></td><td>Reporting automation</td></tr>
+          <tr><td><strong>TOTAL</strong></td><td><strong>SAR 1,540K</strong></td><td><strong>SAR 2,400K</strong></td><td><strong><span class="status-pill pill-green">+56%</span></strong></td><td>—</td></tr>
+        </tbody>
+      </table>`
+  },
+  'inventory': {
+    title: 'Inventory Turnover — 12.4x Detail',
+    html: `
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val">12.4x</span><span class="modal-kpi-lbl">Current Turnover</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">8–10x</span><span class="modal-kpi-lbl">Industry Benchmark</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">29.4</span><span class="modal-kpi-lbl">Days Inventory</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">↑ +1.8x</span><span class="modal-kpi-lbl">vs Last Year</span></div>
+      </div>
+      <div class="insight-box"><strong>Industry-leading performance:</strong> 12.4x turnover means inventory is refreshed every 29.4 days on average. This is 24-55% above industry benchmark (8-10x), directly reducing holding costs, expiry risk, and working capital requirements.</div>
+      <table class="data-table">
+        <thead><tr><th>Drug Category</th><th>Turnover Rate</th><th>Days on Hand</th><th>vs Benchmark</th><th>Trend</th></tr></thead>
+        <tbody>
+          <tr><td>Antibiotics</td><td><span class="status-pill pill-green">18.2x</span></td><td>20.1 days</td><td>+82%</td><td>↑ Improving</td></tr>
+          <tr><td>Antidiabetics</td><td><span class="status-pill pill-green">14.8x</span></td><td>24.7 days</td><td>+48%</td><td>→ Stable</td></tr>
+          <tr><td>Cardiovascular</td><td><span class="status-pill pill-green">11.2x</span></td><td>32.6 days</td><td>+12%</td><td>↑ Improving</td></tr>
+          <tr><td>Biologics & Insulin</td><td><span class="status-pill pill-amber">7.4x</span></td><td>49.3 days</td><td>-26%</td><td>↓ Declining</td></tr>
+          <tr><td>Pain Management</td><td><span class="status-pill pill-green">16.1x</span></td><td>22.7 days</td><td>+61%</td><td>↑ Improving</td></tr>
+          <tr><td><strong>OVERALL</strong></td><td><strong><span class="status-pill pill-green">12.4x</span></strong></td><td><strong>29.4 days</strong></td><td><strong>+24-55%</strong></td><td>↑ Improving</td></tr>
+        </tbody>
+      </table>`
+  },
+  'alert-sfda': {
+    title: 'Alert: Batch #B2025-847 RSD Sync Failed',
+    html: `
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:var(--red)">FAILED</span><span class="modal-kpi-lbl">RSD Sync Status</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">2 hrs</span><span class="modal-kpi-lbl">Alert Age</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">SAR 200K</span><span class="modal-kpi-lbl">Penalty Risk</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">HIGH</span><span class="modal-kpi-lbl">Priority</span></div>
+      </div>
+      <div class="insight-box" style="border-left-color:var(--red);background:#ffebee"><strong>⚠ Immediate Action Required:</strong> Batch B2025-847 (Metformin 500mg, 2,400 units) failed SFDA RSD serialization sync at 05:47. Root cause: barcode mismatch on lot B2025-847-B. If not resolved within 24 hours, this batch cannot be dispensed and regulatory notification to SFDA is required.</div>
+      <table class="data-table">
+        <thead><tr><th>Field</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Batch Number</td><td><strong>B2025-847</strong></td></tr>
+          <tr><td>Drug Name</td><td>Metformin 500mg Film-Coated Tablets</td></tr>
+          <tr><td>Manufacturer</td><td>Saudi Pharmaceutical Industries Co.</td></tr>
+          <tr><td>Units in Batch</td><td>2,400 tablets (48 boxes × 50 tabs)</td></tr>
+          <tr><td>Expiry Date</td><td>December 2026</td></tr>
+          <tr><td>Failure Reason</td><td>Barcode mismatch — GTIN vs SFDA registered code</td></tr>
+          <tr><td>Quarantine Status</td><td><span class="status-pill pill-amber">Quarantined pending resolution</span></td></tr>
+          <tr><td>Required Action</td><td>Re-serialization and RSD re-submission within 24 hours</td></tr>
+          <tr><td>Responsible Team</td><td>Quality Assurance — Ahmed Al-Qahtani (ext. 2241)</td></tr>
+        </tbody>
+      </table>`
+  },
+  'alert-coldchain': {
+    title: 'Alert: Cold Chain Breach — Shipment SCH-1851',
+    html: `
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:var(--red)">9.4°C</span><span class="modal-kpi-lbl">Current Temp</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">8°C</span><span class="modal-kpi-lbl">Max Allowed</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">45 min</span><span class="modal-kpi-lbl">Duration of Breach</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">SAR 45K</span><span class="modal-kpi-lbl">Product at Risk</span></div>
+      </div>
+      <div class="insight-box" style="border-left-color:var(--amber);background:#fff3e0"><strong>Cold Chain Protocol:</strong> Insulin products require 2–8°C storage. Current temperature 9.4°C for 45 minutes. Per SFDA GDP guidelines, product may still be salvageable if temperature is restored within 1 hour total excursion. Pharmacist assessment required before dispensing.</div>
+      <table class="data-table">
+        <thead><tr><th>Field</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Shipment ID</td><td><strong>SCH-1851</strong></td></tr>
+          <tr><td>Product</td><td>Insulin Glargine 100 units/mL (Lantus) — 480 vials</td></tr>
+          <tr><td>Origin</td><td>Dammam Pharmaceutical Warehouse</td></tr>
+          <tr><td>Destination</td><td>King Fahad Medical City Pharmacy, Riyadh</td></tr>
+          <tr><td>Breach Started</td><td>07:08 AST (45 minutes ago)</td></tr>
+          <tr><td>Temperature at Breach</td><td>8.2°C (rising) → now 9.4°C</td></tr>
+          <tr><td>Refrigeration Unit</td><td>Unit 3B — Compressor fault detected</td></tr>
+          <tr><td>Product Value</td><td>SAR 44,880 (at risk of recall)</td></tr>
+          <tr><td>Action Taken</td><td><span class="status-pill pill-amber">Driver notified. Backup vehicle dispatched. ETA 22 mins.</span></td></tr>
+        </tbody>
+      </table>`
+  },
+  'alert-stockout': {
+    title: 'Alert: Metformin 500mg Critically Low',
+    html: `
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:var(--red)">12</span><span class="modal-kpi-lbl">Units Remaining</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">48</span><span class="modal-kpi-lbl">Daily Usage (avg)</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">0.25</span><span class="modal-kpi-lbl">Days Cover Left</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">4 hrs</span><span class="modal-kpi-lbl">Time to Stockout</span></div>
+      </div>
+      <div class="insight-box" style="border-left-color:var(--red);background:#ffebee"><strong>Patient Safety Risk:</strong> Metformin 500mg is a critical diabetes medication. 847 active patients on this medication. Stockout in approximately 4 hours. Emergency procurement order required immediately. Nearest alternative stock: Al-Nakheel branch (240 units, 12km away).</div>
+      <table class="data-table">
+        <thead><tr><th>Field</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Drug Name</td><td><strong>Metformin HCl 500mg Film-Coated Tablets</strong></td></tr>
+          <tr><td>SKU</td><td>MET-500-T-GLX</td></tr>
+          <tr><td>Current Stock</td><td>12 units</td></tr>
+          <tr><td>Reorder Point</td><td>200 units (was not triggered — system error)</td></tr>
+          <tr><td>EOQ (Standard Order)</td><td>2,000 units</td></tr>
+          <tr><td>Preferred Supplier</td><td>GlaxoSmithKline Saudi Arabia · Lead time: 6 hours</td></tr>
+          <tr><td>Alternative Sources</td><td>Al-Nakheel branch: 240 units · Al-Olaya branch: 180 units</td></tr>
+          <tr><td>Active Patients</td><td>847 patients currently prescribed this medication</td></tr>
+          <tr><td>Required Action</td><td><span class="status-pill pill-red">Emergency PO + Internal transfer from branches</span></td></tr>
+        </tbody>
+      </table>`
+  },
+  'rsd-sync': {
+    title: 'RSD Sync Performance — Deep Dive',
+    html: `
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val">96.3%</span><span class="modal-kpi-lbl">Sync Success Rate</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">3.7%</span><span class="modal-kpi-lbl">Failure Rate</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">21</span><span class="modal-kpi-lbl">Failed Batches</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">99%</span><span class="modal-kpi-lbl">SFDA Target</span></div>
+      </div>
+      <div class="insight-box"><strong>Root Cause Analysis:</strong> 68% of failures caused by GTIN barcode mismatches between supplier labelling and SFDA registration. 24% due to network timeout during RSD API call. 8% due to duplicate serial number submissions. Recommend: supplier quality audit + API connection upgrade.</div>
+      <table class="data-table">
+        <thead><tr><th>Failure Reason</th><th>Count</th><th>% of Failures</th><th>Resolution</th><th>SLA</th></tr></thead>
+        <tbody>
+          <tr><td>GTIN Barcode Mismatch</td><td>14</td><td>66.7%</td><td>Re-serialization required</td><td><span class="status-pill pill-red">24 hrs</span></td></tr>
+          <tr><td>API Timeout / Network</td><td>5</td><td>23.8%</td><td>Automatic retry</td><td><span class="status-pill pill-green">1 hr</span></td></tr>
+          <tr><td>Duplicate Serial Number</td><td>2</td><td>9.5%</td><td>Manual correction</td><td><span class="status-pill pill-amber">4 hrs</span></td></tr>
+          <tr><td><strong>TOTAL</strong></td><td><strong>21</strong></td><td><strong>100%</strong></td><td>—</td><td>—</td></tr>
+        </tbody>
+      </table>`
+  },
+  'failed-batches': {
+    title: 'Failed Batches — 21 Batches Detail',
+    html: `
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:var(--amber)">21</span><span class="modal-kpi-lbl">Failed Batches</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">2.1%</span><span class="modal-kpi-lbl">Failure Rate</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">1.5%</span><span class="modal-kpi-lbl">SFDA Threshold</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">SAR 84K</span><span class="modal-kpi-lbl">Product on Hold</span></div>
+      </div>
+      <div class="insight-box" style="border-left-color:var(--amber);background:#fff3e0"><strong>Above Threshold:</strong> 2.1% failure rate exceeds the 1.5% SFDA threshold. This is the 2nd consecutive month above threshold. If this continues a third month, SFDA requires a corrective action plan submission within 14 days of notification.</div>
+      <table class="data-table">
+        <thead><tr><th>Batch ID</th><th>Drug Name</th><th>Units</th><th>Failure Type</th><th>Status</th><th>Age</th></tr></thead>
+        <tbody>
+          <tr><td>B2025-847</td><td>Metformin 500mg</td><td>2,400</td><td>GTIN Mismatch</td><td><span class="status-pill pill-red">Open</span></td><td>2 hrs</td></tr>
+          <tr><td>B2025-831</td><td>Amoxicillin 500mg</td><td>1,800</td><td>Network Timeout</td><td><span class="status-pill pill-green">Resolved</span></td><td>1 day</td></tr>
+          <tr><td>B2025-818</td><td>Insulin Glargine</td><td>600</td><td>GTIN Mismatch</td><td><span class="status-pill pill-amber">In Progress</span></td><td>3 days</td></tr>
+          <tr><td>B2025-802</td><td>Atorvastatin 40mg</td><td>3,200</td><td>Duplicate Serial</td><td><span class="status-pill pill-amber">In Progress</span></td><td>5 days</td></tr>
+          <tr><td>B2025-798</td><td>Lisinopril 10mg</td><td>2,800</td><td>GTIN Mismatch</td><td><span class="status-pill pill-green">Resolved</span></td><td>6 days</td></tr>
+        </tbody>
+      </table>`
+  },
+  'vendor-sla': {
+    title: 'Vendor SLA Performance — Full Analysis',
+    html: `
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val">94.6%</span><span class="modal-kpi-lbl">Avg On-Time Rate</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">3</span><span class="modal-kpi-lbl">Vendors Below SLA</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">48</span><span class="modal-kpi-lbl">Active POs</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">2.4</span><span class="modal-kpi-lbl">Avg Lead Days</span></div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Vendor</th><th>Category</th><th>On-Time %</th><th>Quality Score</th><th>Active POs</th><th>Lead Days</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>GSK Saudi Arabia</td><td>Antidiabetics</td><td>98.4%</td><td>9.2/10</td><td>8</td><td>1.8</td><td><span class="status-pill pill-green">Excellent</span></td></tr>
+          <tr><td>Jamjoom Pharma</td><td>Generics</td><td>96.8%</td><td>8.8/10</td><td>12</td><td>2.1</td><td><span class="status-pill pill-green">Good</span></td></tr>
+          <tr><td>SPIMACO</td><td>Antibiotics</td><td>95.2%</td><td>9.0/10</td><td>9</td><td>2.4</td><td><span class="status-pill pill-green">Good</span></td></tr>
+          <tr><td>Tabuk Pharmaceuticals</td><td>Mixed</td><td>93.1%</td><td>8.4/10</td><td>7</td><td>2.8</td><td><span class="status-pill pill-blue">Monitor</span></td></tr>
+          <tr><td>Al-Dawaa Medical</td><td>Biologics</td><td>86.4%</td><td>7.2/10</td><td>6</td><td>4.2</td><td><span class="status-pill pill-amber">At Risk</span></td></tr>
+          <tr><td>Gulf Medical Supply</td><td>Cold Chain</td><td>84.2%</td><td>7.8/10</td><td>4</td><td>3.8</td><td><span class="status-pill pill-red">Breach</span></td></tr>
+          <tr><td>Med-Supply KSA</td><td>OTC & Generics</td><td>81.6%</td><td>6.9/10</td><td>2</td><td>5.1</td><td><span class="status-pill pill-red">Breach</span></td></tr>
+        </tbody>
+      </table>`
+  }
+}; // end const DRILLS = {...}
+
+function openDrill(key) {
+  // Search all drill entries - handles both quote styles
+  let d = null;
+  try { d = DRILLS[key]; } catch(e) {}
+  // Fallback: scan object manually
+  if (!d) {
+    const keys = Object.keys(DRILLS);
+    for (let k of keys) { if (k === key) { d = DRILLS[k]; break; } }
+  }
+  const modal = document.getElementById('drillModal');
+  const titleEl = document.getElementById('modalTitle');
+  const bodyEl = document.getElementById('modalBody');
+  if (d && d.title && d.html) {
+    titleEl.textContent = d.title;
+    bodyEl.innerHTML = d.html;
+  } else {
+    titleEl.textContent = key.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase()) + ' — Detail';
+    bodyEl.innerHTML = '<p style="padding:12px 0;color:#5e6c84">Loading detail for: <strong>' + key + '</strong></p>';
+  }
+  modal.classList.add('open');
+}
+
+function closeDrill() {
+  document.getElementById('drillModal').classList.remove('open');
+}
+
+function closeDrillIfOverlay(e) {
+  if (e.target.id === 'drillModal') closeDrill();
+}
+
+// ── POPULATE TABLES ────────────────────────────────────────────────────────
+const nearExpiryData = [
+  ['Amoxicillin 250mg Cap','840','Jun 2, 2025','8','Antibiotics','<span class="status-pill pill-red">Urgent</span>'],
+  ['Metformin 500mg Tab','1,240','Jun 8, 2025','14','Antidiabetic','<span class="status-pill pill-red">Urgent</span>'],
+  ['Atorvastatin 40mg','560','Jun 15, 2025','21','Cardiovascular','<span class="status-pill pill-amber">Action</span>'],
+  ['Lisinopril 10mg','380','Jun 18, 2025','24','Cardiovascular','<span class="status-pill pill-amber">Action</span>'],
+  ['Insulin Glargine','240','Jun 20, 2025','26','Biologics','<span class="status-pill pill-red">Return</span>'],
+  ['Omeprazole 20mg','920','Jun 25, 2025','31','GI Tract','<span class="status-pill pill-blue">Monitor</span>'],
+  ['Paracetamol 500mg','2,100','Jul 1, 2025','37','Analgesic','<span class="status-pill pill-blue">Monitor</span>'],
+  ['Ciprofloxacin 500mg','480','Jul 5, 2025','41','Antibiotic','<span class="status-pill pill-blue">Monitor</span>'],
+  ['Prednisolone 5mg','640','Jul 8, 2025','44','Steroid','<span class="status-pill pill-green">Low Risk</span>'],
+  ['Amlodipine 10mg','320','Jul 12, 2025','48','Cardiovascular','<span class="status-pill pill-green">Low Risk</span>'],
+];
+
+const vendorData = [
+  ['GSK Saudi Arabia','Antidiabetics','98.4%','9.2/10','8','1.8','<span class="status-pill pill-green">Excellent</span>'],
+  ['Jamjoom Pharma','Generics','96.8%','8.8/10','12','2.1','<span class="status-pill pill-green">Good</span>'],
+  ['SPIMACO','Antibiotics','95.2%','9.0/10','9','2.4','<span class="status-pill pill-green">Good</span>'],
+  ['Tabuk Pharmaceuticals','Mixed','93.1%','8.4/10','7','2.8','<span class="status-pill pill-blue">Monitor</span>'],
+  ['Al-Dawaa Medical','Biologics','86.4%','7.2/10','6','4.2','<span class="status-pill pill-amber">At Risk</span>'],
+  ['Gulf Medical Supply','Cold Chain','84.2%','7.8/10','4','3.8','<span class="status-pill pill-red">Breach</span>'],
+  ['Med-Supply KSA','OTC','81.6%','6.9/10','2','5.1','<span class="status-pill pill-red">Breach</span>'],
+];
+
+function buildTable(id, data) {
+  const tbody = document.getElementById(id);
+  if (!tbody) return;
+  tbody.innerHTML = data.map(row => `<tr onclick="openDrill('near-expiry-detail')" style="cursor:pointer">${row.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  buildTable('nearExpiryTable', nearExpiryData);
+  buildTable('vendorTable', vendorData);
+  initCharts();
+});
+
+// ── CHARTS ────────────────────────────────────────────────────────────────
+function initCharts() {
+  const months = ['Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May'];
+  const font = "'IBM Plex Sans'";
+  const gridColor = 'rgba(220,229,242,.6)';
+  const textColor = '#7a90b8';
+
+  const defaults = {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{ labels:{ font:{family:font,size:11}, color:textColor, boxWidth:12, padding:14 } } },
+    scales:{
+      x:{ grid:{display:false}, ticks:{color:textColor,font:{family:font,size:10}} },
+      y:{ grid:{color:gridColor}, ticks:{color:textColor,font:{family:font,size:10}} }
+    }
+  };
+
+  // ── DRILL-DOWN PANELS (Level 2–4, injected into DRILLS at runtime) ──────
+  Object.assign(DRILLS, {
+  'drugs-serialized': {
+    title: 'Level 1 → Level 2 → Level 3 → Level 4: Drugs Serialized — Full Drill-Down',
+    html: `
+      <div style="background:#e3f2fd;border-left:4px solid #1565c0;padding:10px 16px;border-radius:6px;margin-bottom:16px;font-size:13px">
+        <strong style="color:#1565c0">You are at Level 2.</strong> Click any category row below to see Level 3 batch records. Level 4 = individual batch root cause.
+      </div>
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val">98,700</span><span class="modal-kpi-lbl">Batches Compliant</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">1,300</span><span class="modal-kpi-lbl">Pending Sync</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">21</span><span class="modal-kpi-lbl">Failed — Action Required</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">98.7%</span><span class="modal-kpi-lbl">Overall Rate</span></div>
+      </div>
+      <div class="insight-box"><strong>Level 2 View — By Drug Category:</strong> Biologics & Insulin has the highest failure rate at 4.4% (200 failed batches). Antidiabetics at 2.4% is above threshold. All other categories at 100% compliance.</div>
+      <table class="data-table">
+        <thead><tr><th>Drug Category</th><th>Total Batches</th><th>Compliant</th><th>Pending</th><th>Failed</th><th>Rate</th><th>Risk</th><th>→ Level 3</th></tr></thead>
+        <tbody>
+          <tr onclick="openDrill('antibiotics')"><td><strong>Antibiotics</strong></td><td>28,400</td><td>28,400</td><td>0</td><td>0</td><td><span class="status-pill pill-green">100.0%</span></td><td><span class="status-pill pill-green">Low</span></td><td style="color:#1565c0;cursor:pointer">View Batches ↗</td></tr>
+          <tr onclick="openDrill('failed-batches')"><td><strong>Antidiabetics</strong></td><td>22,100</td><td>21,580</td><td>380</td><td>140</td><td><span class="status-pill pill-amber">97.6%</span></td><td><span class="status-pill pill-amber">Medium</span></td><td style="color:#1565c0;cursor:pointer">View Batches ↗</td></tr>
+          <tr onclick="openDrill('antibiotics')"><td><strong>Cardiovascular</strong></td><td>18,600</td><td>18,600</td><td>0</td><td>0</td><td><span class="status-pill pill-green">100.0%</span></td><td><span class="status-pill pill-green">Low</span></td><td style="color:#1565c0;cursor:pointer">View Batches ↗</td></tr>
+          <tr onclick="openDrill('failed-batches')"><td><strong>Biologics & Insulin</strong></td><td>14,200</td><td>13,580</td><td>420</td><td>200</td><td><span class="status-pill pill-red">95.6%</span></td><td><span class="status-pill pill-red">High</span></td><td style="color:#1565c0;cursor:pointer">View Batches ↗</td></tr>
+          <tr onclick="openDrill('antibiotics')"><td><strong>Pain Management</strong></td><td>9,800</td><td>9,800</td><td>0</td><td>0</td><td><span class="status-pill pill-green">100.0%</span></td><td><span class="status-pill pill-green">Low</span></td><td style="color:#1565c0;cursor:pointer">View Batches ↗</td></tr>
+          <tr onclick="openDrill('failed-batches')"><td><strong>Controlled Substances</strong></td><td>7,400</td><td>7,240</td><td>100</td><td>60</td><td><span class="status-pill pill-amber">97.8%</span></td><td><span class="status-pill pill-amber">Medium</span></td><td style="color:#1565c0;cursor:pointer">View Batches ↗</td></tr>
+          <tr onclick="openDrill('antibiotics')"><td><strong>OTC Medications</strong></td><td>4,500</td><td>4,280</td><td>180</td><td>40</td><td><span class="status-pill pill-amber">95.1%</span></td><td><span class="status-pill pill-amber">Medium</span></td><td style="color:#1565c0;cursor:pointer">View Batches ↗</td></tr>
+          <tr style="background:#f0f4fa;font-weight:700"><td><strong>TOTAL</strong></td><td><strong>100,000</strong></td><td><strong>98,700</strong></td><td><strong>1,300</strong></td><td><strong>21</strong></td><td><span class="status-pill pill-green"><strong>98.7%</strong></span></td><td>—</td><td>—</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:12px;font-size:12px;color:#5e6c84;font-style:italic">↑ Click any row above → Level 3 (individual batch records) → Level 4 (root cause + corrective action)</div>`
+  },
+
+  'antibiotics': {
+    title: 'Level 3: Antibiotics Category — All Batch Records',
+    html: `
+      <div style="background:#e3f2fd;border-left:4px solid #1565c0;padding:10px 16px;border-radius:6px;margin-bottom:16px;font-size:13px">
+        <strong>Level 3 — Antibiotics Batch Records.</strong> All 28,400 batches compliant. No failures. <span style="color:#2e7d32;font-weight:600">✓ Zero action required for this category.</span>
+      </div>
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#2e7d32">28,400</span><span class="modal-kpi-lbl">Total Batches</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#2e7d32">28,400</span><span class="modal-kpi-lbl">Compliant</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#2e7d32">0</span><span class="modal-kpi-lbl">Failed</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#2e7d32">100.0%</span><span class="modal-kpi-lbl">Compliance Rate</span></div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Drug Name</th><th>Batches</th><th>Manufacturer</th><th>Last Sync</th><th>Status</th><th>Next Audit</th></tr></thead>
+        <tbody>
+          <tr><td>Amoxicillin 250mg</td><td>6,240</td><td>Jamjoom Pharma</td><td>Today 06:14</td><td><span class="status-pill pill-green">100% Synced</span></td><td>Jun 15</td></tr>
+          <tr><td>Amoxicillin 500mg</td><td>4,800</td><td>SPIMACO</td><td>Today 06:14</td><td><span class="status-pill pill-green">100% Synced</span></td><td>Jun 15</td></tr>
+          <tr><td>Ciprofloxacin 500mg</td><td>3,920</td><td>GSK Saudi Arabia</td><td>Today 06:14</td><td><span class="status-pill pill-green">100% Synced</span></td><td>Jun 15</td></tr>
+          <tr><td>Azithromycin 500mg</td><td>3,480</td><td>Jamjoom Pharma</td><td>Today 06:14</td><td><span class="status-pill pill-green">100% Synced</span></td><td>Jun 15</td></tr>
+          <tr><td>Cephalexin 500mg</td><td>2,960</td><td>Saudi Pharma Industries</td><td>Today 06:14</td><td><span class="status-pill pill-green">100% Synced</span></td><td>Jun 15</td></tr>
+          <tr><td>All other antibiotics (18 SKUs)</td><td>7,000</td><td>Various</td><td>Today 06:14</td><td><span class="status-pill pill-green">100% Synced</span></td><td>Jun 15</td></tr>
+        </tbody>
+      </table>
+      <div class="insight-box" style="margin-top:14px"><strong>Level 4 available:</strong> No failures in this category — Level 4 root cause analysis not required. To see root cause detail for failed categories, go back and click Antidiabetics or Biologics rows.</div>`
+  },
+
+  'audit-readiness': {
+    title: 'Level 1 → 2 → 3 → 4: Audit Readiness — 94.8% — Deep Drill',
+    html: `
+      <div style="background:#fff3e0;border-left:4px solid #e65100;padding:10px 16px;border-radius:6px;margin-bottom:16px;font-size:13px">
+        <strong style="color:#e65100">⚠ SFDA Audit scheduled June 15, 2025 — 18 days remaining.</strong> Readiness at 94.8% vs 95% target. 5 documentation gaps must be closed.
+      </div>
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val">94.8%</span><span class="modal-kpi-lbl">Readiness Score</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">95%</span><span class="modal-kpi-lbl">Target Score</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">5</span><span class="modal-kpi-lbl">Documentation Gaps</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">18 days</span><span class="modal-kpi-lbl">To Audit Date</span></div>
+      </div>
+      <div class="insight-box"><strong>Level 2 — Audit Readiness by Domain:</strong> Regulatory documentation and controlled drug records are the two weakest areas. All operational procedures passed last review.</div>
+      <table class="data-table">
+        <thead><tr><th>Audit Domain</th><th>Score</th><th>Target</th><th>Gaps</th><th>Status</th><th>→ Level 3 Detail</th></tr></thead>
+        <tbody>
+          <tr onclick="openDrill('alert-audit')"><td><strong>Drug Serialization Records</strong></td><td>98.7%</td><td>100%</td><td>1</td><td><span class="status-pill pill-green">Pass</span></td><td style="color:#1565c0;cursor:pointer">View Gaps ↗</td></tr>
+          <tr onclick="openDrill('alert-audit')"><td><strong>Cold Chain Documentation</strong></td><td>96.2%</td><td>98%</td><td>1</td><td><span class="status-pill pill-amber">Watch</span></td><td style="color:#1565c0;cursor:pointer">View Gaps ↗</td></tr>
+          <tr onclick="openDrill('alert-audit')"><td><strong>Controlled Drug Registers</strong></td><td>91.4%</td><td>95%</td><td>2</td><td><span class="status-pill pill-red">Fail</span></td><td style="color:#1565c0;cursor:pointer">View Gaps ↗</td></tr>
+          <tr onclick="openDrill('alert-audit')"><td><strong>Regulatory Correspondence</strong></td><td>88.6%</td><td>95%</td><td>1</td><td><span class="status-pill pill-red">Fail</span></td><td style="color:#1565c0;cursor:pointer">View Gaps ↗</td></tr>
+          <tr onclick="openDrill('alert-audit')"><td><strong>Staff Training Records</strong></td><td>97.8%</td><td>95%</td><td>0</td><td><span class="status-pill pill-green">Pass</span></td><td style="color:#1565c0;cursor:pointer">View Records ↗</td></tr>
+          <tr onclick="openDrill('alert-audit')"><td><strong>Facility Inspection Reports</strong></td><td>100.0%</td><td>95%</td><td>0</td><td><span class="status-pill pill-green">Pass</span></td><td style="color:#1565c0;cursor:pointer">View Records ↗</td></tr>
+        </tbody>
+      </table>`
+  },
+
+  'alert-audit': {
+    title: 'Level 3 → 4: Audit Documentation Gaps — Individual Gap Records',
+    html: `
+      <div style="background:#fff3e0;border-left:4px solid #e65100;padding:10px 16px;border-radius:6px;margin-bottom:16px;font-size:13px">
+        <strong>Level 3 — Individual Documentation Gaps.</strong> 5 gaps identified. 3 critical (must close before audit). Click any gap for Level 4 corrective detail.
+      </div>
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#c62828">3</span><span class="modal-kpi-lbl">Critical Gaps</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#e65100">2</span><span class="modal-kpi-lbl">Medium Gaps</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">Jun 10</span><span class="modal-kpi-lbl">Close-by Deadline</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">18 days</span><span class="modal-kpi-lbl">To Audit</span></div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Gap ID</th><th>Domain</th><th>Gap Description</th><th>Priority</th><th>Owner</th><th>Due</th><th>Status</th><th>→ L4 Action</th></tr></thead>
+        <tbody>
+          <tr onclick="openDrill('risk-audit')"><td>GAP-001</td><td>Controlled Drugs</td><td>Morphine dispensing register missing entries Jun 3–8</td><td><span class="status-pill pill-red">Critical</span></td><td>Head Pharmacist</td><td>Jun 10</td><td><span class="status-pill pill-amber">In Progress</span></td><td style="color:#1565c0;cursor:pointer">Fix Plan ↗</td></tr>
+          <tr onclick="openDrill('risk-audit')"><td>GAP-002</td><td>Controlled Drugs</td><td>Pethidine destruction certificate not filed for Apr batch</td><td><span class="status-pill pill-red">Critical</span></td><td>Quality Assurance</td><td>Jun 8</td><td><span class="status-pill pill-red">Open</span></td><td style="color:#1565c0;cursor:pointer">Fix Plan ↗</td></tr>
+          <tr onclick="openDrill('risk-audit')"><td>GAP-003</td><td>Regulatory</td><td>SFDA licence renewal letter not on file (expired Apr 2025)</td><td><span class="status-pill pill-red">Critical</span></td><td>Regulatory Affairs</td><td>Jun 6</td><td><span class="status-pill pill-amber">In Progress</span></td><td style="color:#1565c0;cursor:pointer">Fix Plan ↗</td></tr>
+          <tr onclick="openDrill('risk-audit')"><td>GAP-004</td><td>Cold Chain</td><td>Temperature excursion report SCH-1824 not completed</td><td><span class="status-pill pill-amber">Medium</span></td><td>Logistics Manager</td><td>Jun 12</td><td><span class="status-pill pill-amber">In Progress</span></td><td style="color:#1565c0;cursor:pointer">Fix Plan ↗</td></tr>
+          <tr onclick="openDrill('risk-audit')"><td>GAP-005</td><td>Serialization</td><td>Batch deviation report for B2025-712 not approved</td><td><span class="status-pill pill-amber">Medium</span></td><td>Quality Assurance</td><td>Jun 14</td><td><span class="status-pill pill-red">Open</span></td><td style="color:#1565c0;cursor:pointer">Fix Plan ↗</td></tr>
+        </tbody>
+      </table>`
+  },
+
+  'risk-audit': {
+    title: 'Level 4: Audit Gap — Corrective Action Detail (Deepest Level)',
+    html: `
+      <div style="background:#f0fdf4;border-left:4px solid #2e7d32;padding:10px 16px;border-radius:6px;margin-bottom:16px;font-size:13px">
+        <strong style="color:#2e7d32">Level 4 — This is the deepest analysis level.</strong> Individual corrective actions, responsible persons, evidence required, and verification steps.
+      </div>
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val">5</span><span class="modal-kpi-lbl">Total Actions</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">2</span><span class="modal-kpi-lbl">In Progress</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">3</span><span class="modal-kpi-lbl">Not Started</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">Jun 10</span><span class="modal-kpi-lbl">Hardest Deadline</span></div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Action</th><th>Corrective Step</th><th>Owner</th><th>Due</th><th>Evidence Needed</th><th>Verification</th><th>Progress</th></tr></thead>
+        <tbody>
+          <tr><td>GAP-001</td><td>Reconstruct morphine register from CCTV + pharmacist witness statements for Jun 3–8</td><td>Ahmed Al-Qahtani (Head Pharmacist)</td><td>Jun 10</td><td>Completed register pages + 2 witness signatures + CCTV log</td><td>QA Director sign-off</td><td><span class="status-pill pill-amber">60% done</span></td></tr>
+          <tr><td>GAP-002</td><td>Locate Pethidine destruction event witnesses and complete retrospective certificate</td><td>Quality Assurance</td><td>Jun 8</td><td>Signed destruction cert + MOH witness confirmation</td><td>Regulatory Affairs review</td><td><span class="status-pill pill-red">Not started</span></td></tr>
+          <tr><td>GAP-003</td><td>Submit SFDA licence renewal emergency application + obtain temporary extension letter</td><td>Sara Al-Dosari (Regulatory)</td><td>Jun 6</td><td>SFDA stamped application + temporary extension approval</td><td>CEO sign-off</td><td><span class="status-pill pill-amber">40% done</span></td></tr>
+          <tr><td>GAP-004</td><td>Complete SCH-1824 excursion report: temperature log + product assessment + disposal decision</td><td>Mohammed Al-Zahrani (Logistics)</td><td>Jun 12</td><td>Completed excursion form + pharmacist product assessment</td><td>Quality Director review</td><td><span class="status-pill pill-amber">75% done</span></td></tr>
+          <tr><td>GAP-005</td><td>Complete batch deviation report B2025-712 and obtain Quality Director approval signature</td><td>Quality Assurance</td><td>Jun 14</td><td>Approved deviation report with root cause and CAPA</td><td>Quality Director signature</td><td><span class="status-pill pill-red">Not started</span></td></tr>
+        </tbody>
+      </table>
+      <div class="insight-box" style="margin-top:14px"><strong>If all 5 gaps closed by their deadlines:</strong> Audit readiness rises from 94.8% to 97.2% — above the 95% target. Estimated audit outcome: Full Pass with no conditions.</div>`
+  },
+
+  'cold-chain-detail': {
+    title: 'Level 1 → 2 → 3 → 4: Cold Chain — Full Drill',
+    html: `
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val">97.2%</span><span class="modal-kpi-lbl">Integrity Rate</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">1</span><span class="modal-kpi-lbl">Active Breach</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">49</span><span class="modal-kpi-lbl">Shipments Monitored</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">SAR 44.9K</span><span class="modal-kpi-lbl">Product at Risk</span></div>
+      </div>
+      <div class="insight-box"><strong>Level 2 — By Temperature Zone:</strong> Refrigerated (2–8°C) zone has the active breach. Frozen and ambient zones are within specification.</div>
+      <table class="data-table">
+        <thead><tr><th>Temperature Zone</th><th>Shipments</th><th>In Range</th><th>Breached</th><th>Integrity %</th><th>Status</th><th>→ Level 3</th></tr></thead>
+        <tbody>
+          <tr onclick="openDrill('alert-coldchain')"><td><strong>2–8°C Refrigerated</strong></td><td>28</td><td>27</td><td>1</td><td><span class="status-pill pill-amber">96.4%</span></td><td><span class="status-pill pill-red">Active Breach</span></td><td style="color:#1565c0;cursor:pointer">SCH-1851 ↗</td></tr>
+          <tr onclick="openDrill('antibiotics')"><td><strong>15–25°C Ambient</strong></td><td>14</td><td>14</td><td>0</td><td><span class="status-pill pill-green">100.0%</span></td><td><span class="status-pill pill-green">Normal</span></td><td style="color:#1565c0;cursor:pointer">View ↗</td></tr>
+          <tr onclick="openDrill('antibiotics')"><td><strong>-20°C Frozen</strong></td><td>7</td><td>7</td><td>0</td><td><span class="status-pill pill-green">100.0%</span></td><td><span class="status-pill pill-green">Normal</span></td><td style="color:#1565c0;cursor:pointer">View ↗</td></tr>
+          <tr style="font-weight:700;background:#f0f4fa"><td><strong>ALL ZONES</strong></td><td><strong>49</strong></td><td><strong>48</strong></td><td><strong>1</strong></td><td><span class="status-pill pill-amber"><strong>97.2%</strong></span></td><td>—</td><td>—</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:14px">
+        <div class="insight-box" style="border-left-color:#c62828;background:#ffebee"><strong>Active Breach Detail — SCH-1851:</strong> Insulin Glargine (480 vials, SAR 44,880). Temperature 9.4°C — 1.4°C above 8°C limit. Duration: 45 minutes. Backup vehicle dispatched (ETA 22 mins). Product assessment required on arrival. Click Refrigerated row for full L3 → L4 investigation.</div>
+      </div>`
+  },
+
+  'near-expiry-detail': {
+    title: 'Level 2: Near-Expiry Items — 247 SKUs by Urgency Band',
+    html: `
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#c62828">14</span><span class="modal-kpi-lbl">Expiring < 30 days</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#e65100">48</span><span class="modal-kpi-lbl">Expiring 30–60 days</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#f57c00">94</span><span class="modal-kpi-lbl">Expiring 60–90 days</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#2e7d32">91</span><span class="modal-kpi-lbl">Expiring > 90 days</span></div>
+      </div>
+      <div class="insight-box"><strong>Level 2 — By Urgency Band:</strong> 14 SKUs expire within 30 days requiring immediate action. Total write-off exposure: SAR 176,240 if no action taken. Click any band for Level 3 individual SKU records.</div>
+      <table class="data-table">
+        <thead><tr><th>Urgency Band</th><th>SKU Count</th><th>Total Units</th><th>Value SAR</th><th>Recovery Options</th><th>→ Level 3</th></tr></thead>
+        <tbody>
+          <tr onclick="openDrill('near-expiry')"><td><strong>🔴 Critical: Expiring < 30 days</strong></td><td>14</td><td>8,240</td><td>124,600</td><td>Transfer, Discount Sale, Supplier Return</td><td style="color:#1565c0;cursor:pointer">View SKUs ↗</td></tr>
+          <tr onclick="openDrill('alert-expiry')"><td><strong>🟡 Urgent: Expiring 30–60 days</strong></td><td>48</td><td>24,180</td><td>31,640</td><td>Discount Sale, High-Volume Branch Transfer</td><td style="color:#1565c0;cursor:pointer">View SKUs ↗</td></tr>
+          <tr onclick="openDrill('antibiotics')"><td><strong>🔵 Monitor: Expiring 60–90 days</strong></td><td>94</td><td>48,420</td><td>14,200</td><td>Reduce reorder quantity, Monitor</td><td style="color:#1565c0;cursor:pointer">View SKUs ↗</td></tr>
+          <tr onclick="openDrill('antibiotics')"><td><strong>🟢 Low Risk: Expiring > 90 days</strong></td><td>91</td><td>112,640</td><td>5,800</td><td>Standard monitoring</td><td style="color:#1565c0;cursor:pointer">View SKUs ↗</td></tr>
+          <tr style="font-weight:700;background:#f0f4fa"><td><strong>TOTAL</strong></td><td><strong>247</strong></td><td><strong>193,480</strong></td><td><strong>176,240</strong></td><td>—</td><td>—</td></tr>
+        </tbody>
+      </table>`
+  },
+
+  'alert-expiry': {
+    title: 'Level 3: Urgent Near-Expiry — 30 to 60 Days — Individual SKU Records',
+    html: `
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val">48</span><span class="modal-kpi-lbl">SKUs in this Band</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">24,180</span><span class="modal-kpi-lbl">Total Units</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">SAR 31,640</span><span class="modal-kpi-lbl">At-Risk Value</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">Jun 25–Jul 28</span><span class="modal-kpi-lbl">Expiry Window</span></div>
+      </div>
+      <div class="insight-box"><strong>Level 3 — Top 10 by Value:</strong> Showing highest-value items first. Click any row for Level 4 — full action plan, transfer history, and supplier return eligibility.</div>
+      <table class="data-table">
+        <thead><tr><th>Drug Name</th><th>Units</th><th>Expiry</th><th>Days Left</th><th>Value SAR</th><th>Best Action</th><th>→ Level 4</th></tr></thead>
+        <tbody>
+          <tr onclick="openDrill('expiry-losses')"><td>Atorvastatin 40mg</td><td>560</td><td>Jun 25</td><td>31</td><td>22,400</td><td>Discount 30% → Al-Olaya branch</td><td style="color:#1565c0;cursor:pointer">Full Plan ↗</td></tr>
+          <tr onclick="openDrill('expiry-losses')"><td>Ciprofloxacin 500mg</td><td>480</td><td>Jun 28</td><td>34</td><td>19,200</td><td>Transfer if not dispensed by Jun 20</td><td style="color:#1565c0;cursor:pointer">Full Plan ↗</td></tr>
+          <tr onclick="openDrill('expiry-losses')"><td>Amlodipine 10mg</td><td>320</td><td>Jul 5</td><td>41</td><td>11,200</td><td>Monitor — no action yet</td><td style="color:#1565c0;cursor:pointer">Full Plan ↗</td></tr>
+          <tr onclick="openDrill('expiry-losses')"><td>Omeprazole 20mg Cap</td><td>920</td><td>Jun 30</td><td>36</td><td>9,200</td><td>Discount sale + prescriber notification</td><td style="color:#1565c0;cursor:pointer">Full Plan ↗</td></tr>
+          <tr onclick="openDrill('expiry-losses')"><td>Azithromycin 500mg</td><td>280</td><td>Jul 8</td><td>44</td><td>8,400</td><td>Adjust reorder point, monitor</td><td style="color:#1565c0;cursor:pointer">Full Plan ↗</td></tr>
+          <tr onclick="openDrill('expiry-losses')"><td>Metformin XR 1000mg</td><td>660</td><td>Jul 12</td><td>48</td><td>9,240</td><td>Reduce next order quantity</td><td style="color:#1565c0;cursor:pointer">Full Plan ↗</td></tr>
+          <tr onclick="openDrill('expiry-losses')"><td>Paracetamol 500mg</td><td>2,100</td><td>Jul 1</td><td>37</td><td>6,300</td><td>Reduce reorder quantity next cycle</td><td style="color:#1565c0;cursor:pointer">Full Plan ↗</td></tr>
+          <tr onclick="openDrill('expiry-losses')"><td>Prednisolone 5mg</td><td>640</td><td>Jul 8</td><td>44</td><td>5,120</td><td>Low risk — standard monitoring</td><td style="color:#1565c0;cursor:pointer">Full Plan ↗</td></tr>
+        </tbody>
+      </table>`
+  },
+
+  'expiry-losses': {
+    title: 'Level 4: Near-Expiry Item — Full Action Plan (Deepest Level)',
+    html: `
+      <div style="background:#f0fdf4;border-left:4px solid #2e7d32;padding:10px 16px;border-radius:6px;margin-bottom:16px;font-size:13px">
+        <strong style="color:#2e7d32">Level 4 — Deepest Level.</strong> Complete action plan, transfer history, supplier return window, financial impact, and responsible officer.
+      </div>
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val">Atorvastatin 40mg</span><span class="modal-kpi-lbl">Example SKU (ATV-040-TAB)</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">560 units</span><span class="modal-kpi-lbl">Quantity</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">SAR 22,400</span><span class="modal-kpi-lbl">At-Risk Value</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">Jun 25, 2025</span><span class="modal-kpi-lbl">Expiry Date</span></div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Action</th><th>Detail</th><th>Owner</th><th>Deadline</th><th>Expected Recovery SAR</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Step 1: Internal Transfer</strong></td><td>Transfer 280 units to Al-Olaya branch (avg daily dispensing: 18 units — clears stock before expiry)</td><td>Inventory Manager</td><td>Jun 8</td><td>11,200 (full recovery on 280 units)</td><td><span class="status-pill pill-amber">Scheduled</span></td></tr>
+          <tr><td><strong>Step 2: Discount Sale</strong></td><td>Mark remaining 280 units at 30% discount in Al-Nakheel branch — cardiovascular patients likely to accept</td><td>Branch Pharmacist</td><td>Jun 15</td><td>7,840 (70% of face value)</td><td><span class="status-pill pill-red">Not Started</span></td></tr>
+          <tr><td><strong>Step 3: Supplier Return</strong></td><td>If Steps 1+2 leave >50 units, initiate Gulf Medical Supply return (45-day window open until Jun 20)</td><td>Procurement</td><td>Jun 20</td><td>Up to 1,750 (salvage for remaining units)</td><td><span class="status-pill pill-red">Contingency</span></td></tr>
+          <tr><td><strong>Step 4: Write-Off (Last Resort)</strong></td><td>Any remaining units at Jun 25 expiry to be documented, destruction witnessed, SFDA notified</td><td>Quality Assurance</td><td>Jun 25</td><td>0 (loss)</td><td><span class="status-pill pill-blue">Contingency</span></td></tr>
+        </tbody>
+      </table>
+      <div class="modal-kpi-row" style="margin-top:16px">
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#2e7d32">SAR 20,790</span><span class="modal-kpi-lbl">Projected Recovery (Steps 1+2)</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#c62828">SAR 1,610</span><span class="modal-kpi-lbl">Projected Loss (7.2%)</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">Procurement</span><span class="modal-kpi-lbl">Root Cause: Over-ordering</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">Reduce by 40%</span><span class="modal-kpi-lbl">Next Order Adjustment</span></div>
+      </div>`
+  },
+
+  'controlled-drugs': {
+    title: 'Level 2: Controlled Drug Tracking — 1,284 SKUs Detail',
+    html: `
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#2e7d32">100%</span><span class="modal-kpi-lbl">Tracking Rate</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#2e7d32">0</span><span class="modal-kpi-lbl">Discrepancies</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">1,284</span><span class="modal-kpi-lbl">SKUs Monitored</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">4 hrs ago</span><span class="modal-kpi-lbl">Last Full Reconciliation</span></div>
+      </div>
+      <div class="insight-box"><strong>Level 2 — By Controlled Drug Class:</strong> All classes fully reconciled. Last discrepancy was 127 days ago (morphine, resolved same day). MOH audit trail complete.</div>
+      <table class="data-table">
+        <thead><tr><th>Drug Class</th><th>SKUs</th><th>Last Count</th><th>Discrepancies</th><th>Register Status</th><th>MOH Schedule</th><th>→ Level 3</th></tr></thead>
+        <tbody>
+          <tr onclick="openDrill('narcotics')"><td><strong>Narcotics & Opioids</strong></td><td>48</td><td>Today 04:00</td><td>0</td><td><span class="status-pill pill-green">Reconciled</span></td><td>Schedule I</td><td style="color:#1565c0;cursor:pointer">Records ↗</td></tr>
+          <tr onclick="openDrill('psychotropics')"><td><strong>Psychotropics</strong></td><td>124</td><td>Today 04:00</td><td>0</td><td><span class="status-pill pill-green">Reconciled</span></td><td>Schedule II</td><td style="color:#1565c0;cursor:pointer">Records ↗</td></tr>
+          <tr onclick="openDrill('antibiotics')"><td><strong>High-Alert Medications</strong></td><td>312</td><td>Today 04:00</td><td>0</td><td><span class="status-pill pill-green">Reconciled</span></td><td>High Alert</td><td style="color:#1565c0;cursor:pointer">Records ↗</td></tr>
+          <tr onclick="openDrill('antibiotics')"><td><strong>Precursor Chemicals</strong></td><td>28</td><td>Today 04:00</td><td>0</td><td><span class="status-pill pill-green">Reconciled</span></td><td>Schedule III</td><td style="color:#1565c0;cursor:pointer">Records ↗</td></tr>
+          <tr onclick="openDrill('antibiotics')"><td><strong>Other Controlled</strong></td><td>772</td><td>Today 04:00</td><td>0</td><td><span class="status-pill pill-green">Reconciled</span></td><td>Various</td><td style="color:#1565c0;cursor:pointer">Records ↗</td></tr>
+        </tbody>
+      </table>`
+  },
+
+  'narcotics': {
+    title: 'Level 3 → 4: Narcotics & Opioids — Dispensing Register',
+    html: `
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val">48</span><span class="modal-kpi-lbl">Narcotics SKUs</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#2e7d32">0</span><span class="modal-kpi-lbl">Discrepancies MTD</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">127 days</span><span class="modal-kpi-lbl">Since Last Discrepancy</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">MOH Schedule I</span><span class="modal-kpi-lbl">Classification</span></div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Drug Name</th><th>Opening Stock</th><th>Received MTD</th><th>Dispensed MTD</th><th>Destroyed</th><th>Closing Stock</th><th>Variance</th><th>Register</th></tr></thead>
+        <tbody>
+          <tr onclick="openDrill('psychotropics')"><td>Morphine Sulfate 10mg/mL</td><td>84 amp</td><td>120</td><td>98</td><td>0</td><td>106</td><td><span class="status-pill pill-green">Zero</span></td><td><span class="status-pill pill-green">Up to date</span></td></tr>
+          <tr onclick="openDrill('psychotropics')"><td>Fentanyl 50mcg/mL</td><td>60 amp</td><td>96</td><td>88</td><td>0</td><td>68</td><td><span class="status-pill pill-green">Zero</span></td><td><span class="status-pill pill-green">Up to date</span></td></tr>
+          <tr onclick="openDrill('psychotropics')"><td>Pethidine 50mg/mL</td><td>48 amp</td><td>72</td><td>64</td><td>8</td><td>48</td><td><span class="status-pill pill-green">Zero</span></td><td><span class="status-pill pill-green">Up to date</span></td></tr>
+          <tr onclick="openDrill('psychotropics')"><td>Oxycodone 5mg Tablets</td><td>200 tab</td><td>300</td><td>248</td><td>0</td><td>252</td><td><span class="status-pill pill-green">Zero</span></td><td><span class="status-pill pill-green">Up to date</span></td></tr>
+          <tr onclick="openDrill('psychotropics')"><td>Tramadol 50mg Capsules</td><td>480 cap</td><td>600</td><td>562</td><td>0</td><td>518</td><td><span class="status-pill pill-green">Zero</span></td><td><span class="status-pill pill-green">Up to date</span></td></tr>
+        </tbody>
+      </table>
+      <div class="insight-box" style="margin-top:14px"><strong>Level 4 available:</strong> Click any drug row for the full dispensing log — individual patient prescriptions, prescriber details, dispenser ID, and timestamp. Full MOH audit trail maintained.</div>`
+  },
+
+  'psychotropics': {
+    title: 'Level 4: Narcotic Dispensing Log — Individual Transaction Records (Deepest Level)',
+    html: `
+      <div style="background:#f0fdf4;border-left:4px solid #2e7d32;padding:10px 16px;border-radius:6px;margin-bottom:16px;font-size:13px">
+        <strong style="color:#2e7d32">Level 4 — Deepest Level.</strong> Individual dispensing transactions with full MOH audit trail. Every record verified and reconciled.
+      </div>
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val">Morphine 10mg/mL</span><span class="modal-kpi-lbl">Selected Drug</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">98 amp</span><span class="modal-kpi-lbl">Dispensed MTD</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#2e7d32">Zero</span><span class="modal-kpi-lbl">Variance</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">Dr. Khaled Al-Otaibi</span><span class="modal-kpi-lbl">Chief Pharmacist</span></div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Tx ID</th><th>Date/Time</th><th>Patient MRN</th><th>Qty</th><th>Prescriber</th><th>Dispenser ID</th><th>Ward</th><th>Verification</th></tr></thead>
+        <tbody>
+          <tr><td>TXN-8841</td><td>May 28, 08:14</td><td>MRN-284410</td><td>2 amp</td><td>Dr. Hassan Al-Rashidi</td><td>PH-042</td><td>ICU Ward 4</td><td><span class="status-pill pill-green">2-Pharmacist</span></td></tr>
+          <tr><td>TXN-8840</td><td>May 28, 07:52</td><td>MRN-198842</td><td>1 amp</td><td>Dr. Noura Al-Shehri</td><td>PH-041</td><td>Oncology</td><td><span class="status-pill pill-green">2-Pharmacist</span></td></tr>
+          <tr><td>TXN-8839</td><td>May 28, 07:31</td><td>MRN-441820</td><td>2 amp</td><td>Dr. Waleed Al-Ghamdi</td><td>PH-040</td><td>Post-Op Recovery</td><td><span class="status-pill pill-green">2-Pharmacist</span></td></tr>
+          <tr><td>TXN-8838</td><td>May 27, 22:48</td><td>MRN-884412</td><td>1 amp</td><td>Dr. Amal Al-Zahrani</td><td>PH-039</td><td>Palliative Care</td><td><span class="status-pill pill-green">2-Pharmacist</span></td></tr>
+          <tr><td>TXN-8837</td><td>May 27, 20:14</td><td>MRN-331240</td><td>2 amp</td><td>Dr. Omar Al-Dosari</td><td>PH-038</td><td>ICU Ward 2</td><td><span class="status-pill pill-green">2-Pharmacist</span></td></tr>
+          <tr><td>TXN-8836</td><td>May 27, 18:42</td><td>MRN-102884</td><td>1 amp</td><td>Dr. Sara Al-Otaibi</td><td>PH-037</td><td>Surgical Ward</td><td><span class="status-pill pill-green">2-Pharmacist</span></td></tr>
+        </tbody>
+      </table>
+      <div class="insight-box" style="margin-top:14px"><strong>MOH Compliance:</strong> All transactions verified by 2-pharmacist dual-check system. Digital signature trail maintained. Physical register matches Domo system records — zero discrepancy.</div>`
+  },
+
+  'stockout-detail': {
+    title: 'Level 2: Stock Status — Critical and Low Stock Items',
+    html: `
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#c62828">3</span><span class="modal-kpi-lbl">Critical Stockout</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#e65100">48</span><span class="modal-kpi-lbl">Low Stock Items</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">1,840</span><span class="modal-kpi-lbl">Adequate Stock</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">112</span><span class="modal-kpi-lbl">Overstocked</span></div>
+      </div>
+      <div class="insight-box" style="border-left-color:#c62828;background:#ffebee"><strong>3 critical stockouts requiring emergency action:</strong> Metformin 500mg (0.25 days cover), Insulin Regular (1.2 days cover), Amoxicillin 250mg (1.8 days cover). Emergency POs required immediately.</div>
+      <table class="data-table">
+        <thead><tr><th>Drug Name</th><th>Stock Units</th><th>Daily Usage</th><th>Days Cover</th><th>Status</th><th>Emergency PO</th><th>→ Level 3</th></tr></thead>
+        <tbody>
+          <tr onclick="openDrill('alert-stockout')"><td><strong>Metformin 500mg</strong></td><td>12</td><td>48</td><td>0.25 days</td><td><span class="status-pill pill-red">CRITICAL</span></td><td><span class="status-pill pill-amber">In Process</span></td><td style="color:#1565c0;cursor:pointer">Full Detail ↗</td></tr>
+          <tr onclick="openDrill('alert-stockout')"><td><strong>Insulin Regular 100U</strong></td><td>6 vials</td><td>5</td><td>1.2 days</td><td><span class="status-pill pill-red">CRITICAL</span></td><td><span class="status-pill pill-red">Not Started</span></td><td style="color:#1565c0;cursor:pointer">Full Detail ↗</td></tr>
+          <tr onclick="openDrill('alert-stockout')"><td><strong>Amoxicillin 250mg</strong></td><td>48</td><td>26</td><td>1.8 days</td><td><span class="status-pill pill-red">CRITICAL</span></td><td><span class="status-pill pill-amber">Submitted</span></td><td style="color:#1565c0;cursor:pointer">Full Detail ↗</td></tr>
+          <tr onclick="openDrill('alert-stockout')"><td>Atorvastatin 20mg</td><td>84</td><td>32</td><td>2.6 days</td><td><span class="status-pill pill-amber">Low Stock</span></td><td><span class="status-pill pill-green">PO Sent</span></td><td style="color:#1565c0;cursor:pointer">Full Detail ↗</td></tr>
+          <tr onclick="openDrill('alert-stockout')"><td>Lisinopril 5mg</td><td>120</td><td>28</td><td>4.3 days</td><td><span class="status-pill pill-amber">Low Stock</span></td><td><span class="status-pill pill-green">PO Sent</span></td><td style="color:#1565c0;cursor:pointer">Full Detail ↗</td></tr>
+        </tbody>
+      </table>`
+  },
+
+  'cost-savings-detail': {
+    title: 'Level 2: Cost Savings — SAR 2.4M Breakdown',
+    html: `
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#2e7d32">SAR 2.4M</span><span class="modal-kpi-lbl">Total Q2 Savings</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">SAR 1.1M</span><span class="modal-kpi-lbl">Waste Prevention</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">SAR 840K</span><span class="modal-kpi-lbl">Procurement</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">SAR 460K</span><span class="modal-kpi-lbl">Automation</span></div>
+      </div>
+      <div class="insight-box"><strong>Level 2 — By Savings Initiative:</strong> Near-expiry prevention (Domo alerts + transfers) is the largest contributor at 46%. Vendor consolidation program delivered 35%. Reporting automation freed 3.2 FTE-equivalents.</div>
+      <table class="data-table">
+        <thead><tr><th>Initiative</th><th>Q1 2025 SAR</th><th>Q2 2025 SAR</th><th>Change %</th><th>Driver</th><th>→ Level 3</th></tr></thead>
+        <tbody>
+          <tr onclick="openDrill('expiry-losses')"><td><strong>Near-Expiry Waste Prevention</strong></td><td>680,000</td><td>1,100,000</td><td><span class="status-pill pill-green">+62%</span></td><td>Domo near-expiry alert system + proactive transfers</td><td style="color:#1565c0;cursor:pointer">Detail ↗</td></tr>
+          <tr onclick="openDrill('vendor-sla')"><td><strong>Procurement Cost Reduction</strong></td><td>620,000</td><td>840,000</td><td><span class="status-pill pill-green">+35%</span></td><td>Vendor consolidation from 12 to 7 approved suppliers</td><td style="color:#1565c0;cursor:pointer">Detail ↗</td></tr>
+          <tr onclick="openDrill('antibiotics')"><td><strong>Reporting Automation (Domo)</strong></td><td>240,000</td><td>460,000</td><td><span class="status-pill pill-green">+92%</span></td><td>Eliminated 3.2 FTE manual reporting hours</td><td style="color:#1565c0;cursor:pointer">Detail ↗</td></tr>
+          <tr style="font-weight:700;background:#f0f4fa"><td><strong>TOTAL</strong></td><td><strong>SAR 1,540,000</strong></td><td><strong>SAR 2,400,000</strong></td><td><span class="status-pill pill-green"><strong>+56%</strong></span></td><td>—</td><td>—</td></tr>
+        </tbody>
+      </table>`
+  },
+
+  'procurement': {
+    title: 'Level 2: Procurement Analysis — SAR 8.4M MTD Spend',
+    html: `
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val">SAR 8.4M</span><span class="modal-kpi-lbl">MTD Spend</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#2e7d32">↓ 6.2%</span><span class="modal-kpi-lbl">vs Last Month</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">48</span><span class="modal-kpi-lbl">Active POs</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">SAR 44.6</span><span class="modal-kpi-lbl">Cost per Rx</span></div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Category</th><th>MTD Spend SAR</th><th>% of Total</th><th>vs Budget</th><th>POs Active</th><th>→ Level 3</th></tr></thead>
+        <tbody>
+          <tr onclick="openDrill('vendor-sla')"><td><strong>Biologics & Insulin</strong></td><td>2,940,000</td><td>35.0%</td><td><span class="status-pill pill-amber">+4.2%</span></td><td>12</td><td style="color:#1565c0;cursor:pointer">PO Detail ↗</td></tr>
+          <tr onclick="openDrill('vendor-sla')"><td><strong>Antibiotics</strong></td><td>1,764,000</td><td>21.0%</td><td><span class="status-pill pill-green">-2.1%</span></td><td>10</td><td style="color:#1565c0;cursor:pointer">PO Detail ↗</td></tr>
+          <tr onclick="openDrill('vendor-sla')"><td><strong>Cardiovascular</strong></td><td>1,428,000</td><td>17.0%</td><td><span class="status-pill pill-green">-1.4%</span></td><td>8</td><td style="color:#1565c0;cursor:pointer">PO Detail ↗</td></tr>
+          <tr onclick="openDrill('vendor-sla')"><td><strong>Antidiabetics</strong></td><td>1,260,000</td><td>15.0%</td><td><span class="status-pill pill-green">-3.2%</span></td><td>9</td><td style="color:#1565c0;cursor:pointer">PO Detail ↗</td></tr>
+          <tr onclick="openDrill('vendor-sla')"><td><strong>Other Categories</strong></td><td>1,008,000</td><td>12.0%</td><td><span class="status-pill pill-green">-8.4%</span></td><td>9</td><td style="color:#1565c0;cursor:pointer">PO Detail ↗</td></tr>
+          <tr style="font-weight:700;background:#f0f4fa"><td><strong>TOTAL</strong></td><td><strong>SAR 8,400,000</strong></td><td><strong>100%</strong></td><td><span class="status-pill pill-green"><strong>-6.2%</strong></span></td><td><strong>48</strong></td><td>—</td></tr>
+        </tbody>
+      </table>`
+  },
+
+  'cost-per-rx': {
+    title: 'Level 2 → 3: Cost per Prescription — SAR 44.6 Analysis',
+    html: `
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#2e7d32">SAR 44.6</span><span class="modal-kpi-lbl">Current Cost/Rx</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">SAR 48.2</span><span class="modal-kpi-lbl">6 Months Ago</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#2e7d32">↓ 7.5%</span><span class="modal-kpi-lbl">Improvement</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">SAR 42.0</span><span class="modal-kpi-lbl">12-Month Target</span></div>
+      </div>
+      <div class="insight-box"><strong>Level 2 — By Prescription Category:</strong> Generic substitution program driving cost reduction. Biologics remain highest-cost category. Click any row for Level 3 individual drug cost analysis.</div>
+      <table class="data-table">
+        <thead><tr><th>Category</th><th>Cost/Rx Nov</th><th>Cost/Rx May</th><th>Change</th><th>Rxs/Month</th><th>Monthly Saving</th><th>→ L3</th></tr></thead>
+        <tbody>
+          <tr onclick="openDrill('vendor-reliability')"><td>Biologics</td><td>SAR 284</td><td>SAR 261</td><td><span class="status-pill pill-green">↓ 8.1%</span></td><td>1,240</td><td>SAR 28,520</td><td style="color:#1565c0;cursor:pointer">Detail ↗</td></tr>
+          <tr onclick="openDrill('vendor-reliability')"><td>Cardiovascular</td><td>SAR 62</td><td>SAR 54</td><td><span class="status-pill pill-green">↓ 12.9%</span></td><td>4,820</td><td>SAR 38,560</td><td style="color:#1565c0;cursor:pointer">Detail ↗</td></tr>
+          <tr onclick="openDrill('vendor-reliability')"><td>Antidiabetics</td><td>SAR 48</td><td>SAR 44</td><td><span class="status-pill pill-green">↓ 8.3%</span></td><td>6,140</td><td>SAR 24,560</td><td style="color:#1565c0;cursor:pointer">Detail ↗</td></tr>
+          <tr onclick="openDrill('vendor-reliability')"><td>Antibiotics</td><td>SAR 28</td><td>SAR 24</td><td><span class="status-pill pill-green">↓ 14.3%</span></td><td>8,840</td><td>SAR 35,360</td><td style="color:#1565c0;cursor:pointer">Detail ↗</td></tr>
+          <tr onclick="openDrill('vendor-reliability')"><td>Pain Management</td><td>SAR 18</td><td>SAR 16</td><td><span class="status-pill pill-green">↓ 11.1%</span></td><td>12,480</td><td>SAR 24,960</td><td style="color:#1565c0;cursor:pointer">Detail ↗</td></tr>
+        </tbody>
+      </table>`
+  },
+
+  'vendor-reliability': {
+    title: 'Level 3 → 4: Vendor Reliability — Individual Vendor Scorecard',
+    html: `
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val">94.6%</span><span class="modal-kpi-lbl">Avg On-Time Rate</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">8.5/10</span><span class="modal-kpi-lbl">Avg Quality Score</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">3</span><span class="modal-kpi-lbl">Vendors Below SLA</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">SAR 8.4M</span><span class="modal-kpi-lbl">Annual Spend Managed</span></div>
+      </div>
+      <div class="insight-box"><strong>Level 3 — Individual Vendor Scorecards:</strong> GSK and Jamjoom performing excellently. Al-Dawaa, Gulf Medical and Med-Supply KSA flagged for contract review. Click any vendor row for Level 4 full scorecard with individual delivery records.</div>
+      <table class="data-table">
+        <thead><tr><th>Vendor</th><th>On-Time %</th><th>Quality</th><th>Cold Chain</th><th>Compliance</th><th>SAR Spend</th><th>Contract Status</th><th>→ L4</th></tr></thead>
+        <tbody>
+          <tr onclick="openDrill('delivery-times')"><td><strong>GSK Saudi Arabia</strong></td><td><span class="status-pill pill-green">98.4%</span></td><td>9.2/10</td><td>99.8%</td><td>100%</td><td>2.1M</td><td><span class="status-pill pill-green">Active</span></td><td style="color:#1565c0;cursor:pointer">Scorecard ↗</td></tr>
+          <tr onclick="openDrill('delivery-times')"><td><strong>Jamjoom Pharma</strong></td><td><span class="status-pill pill-green">96.8%</span></td><td>8.8/10</td><td>98.4%</td><td>100%</td><td>1.8M</td><td><span class="status-pill pill-green">Active</span></td><td style="color:#1565c0;cursor:pointer">Scorecard ↗</td></tr>
+          <tr onclick="openDrill('delivery-times')"><td><strong>SPIMACO</strong></td><td><span class="status-pill pill-green">95.2%</span></td><td>9.0/10</td><td>97.2%</td><td>100%</td><td>1.4M</td><td><span class="status-pill pill-green">Active</span></td><td style="color:#1565c0;cursor:pointer">Scorecard ↗</td></tr>
+          <tr onclick="openDrill('delivery-times')"><td><strong>Al-Dawaa Medical</strong></td><td><span class="status-pill pill-amber">86.4%</span></td><td>7.2/10</td><td>88.4%</td><td>94%</td><td>0.8M</td><td><span class="status-pill pill-amber">Review Q3</span></td><td style="color:#1565c0;cursor:pointer">Scorecard ↗</td></tr>
+          <tr onclick="openDrill('delivery-times')"><td><strong>Gulf Medical Supply</strong></td><td><span class="status-pill pill-red">84.2%</span></td><td>7.8/10</td><td>84.2%</td><td>91%</td><td>0.6M</td><td><span class="status-pill pill-red">Breach Notice</span></td><td style="color:#1565c0;cursor:pointer">Scorecard ↗</td></tr>
+          <tr onclick="openDrill('delivery-times')"><td><strong>Med-Supply KSA</strong></td><td><span class="status-pill pill-red">81.6%</span></td><td>6.9/10</td><td>79.8%</td><td>88%</td><td>0.4M</td><td><span class="status-pill pill-red">Breach Notice</span></td><td style="color:#1565c0;cursor:pointer">Scorecard ↗</td></tr>
+        </tbody>
+      </table>`
+  },
+
+  'delivery-times': {
+    title: 'Level 4: Vendor Delivery Records — Individual Shipment Log (Deepest Level)',
+    html: `
+      <div style="background:#f0fdf4;border-left:4px solid #2e7d32;padding:10px 16px;border-radius:6px;margin-bottom:16px;font-size:13px">
+        <strong style="color:#2e7d32">Level 4 — Deepest Level.</strong> Individual delivery transactions for Gulf Medical Supply (below-SLA vendor). Each late delivery documented with root cause.
+      </div>
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val">Gulf Medical Supply</span><span class="modal-kpi-lbl">Selected Vendor</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#c62828">84.2%</span><span class="modal-kpi-lbl">On-Time Rate (SLA: 95%)</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">38</span><span class="modal-kpi-lbl">Deliveries MTD</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">6</span><span class="modal-kpi-lbl">Late Deliveries</span></div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>PO Number</th><th>Drug</th><th>Promised Date</th><th>Actual Date</th><th>Days Late</th><th>Reason</th><th>Impact</th><th>Penalty Applied</th></tr></thead>
+        <tbody>
+          <tr><td>PO-2025-4418</td><td>Insulin Glargine 100U</td><td>May 20</td><td>May 24</td><td><span class="status-pill pill-red">4 days</span></td><td>Production delay at supplier</td><td>Near-stockout insulin dept</td><td><span class="status-pill pill-amber">SAR 2,400</span></td></tr>
+          <tr><td>PO-2025-4401</td><td>Atorvastatin 40mg</td><td>May 14</td><td>May 16</td><td><span class="status-pill pill-amber">2 days</span></td><td>Transport breakdown</td><td>Managed with existing stock</td><td><span class="status-pill pill-amber">SAR 800</span></td></tr>
+          <tr><td>PO-2025-4388</td><td>Metformin 500mg</td><td>May 8</td><td>May 13</td><td><span class="status-pill pill-red">5 days</span></td><td>Port customs delay</td><td>Emergency transfer from branch</td><td><span class="status-pill pill-red">SAR 4,000</span></td></tr>
+          <tr><td>PO-2025-4372</td><td>Amoxicillin 250mg</td><td>May 2</td><td>May 4</td><td><span class="status-pill pill-amber">2 days</span></td><td>Driver shortage</td><td>No impact</td><td><span class="status-pill pill-green">Waived</span></td></tr>
+          <tr><td>PO-2025-4361</td><td>Ciprofloxacin 500mg</td><td>Apr 28</td><td>May 2</td><td><span class="status-pill pill-red">4 days</span></td><td>Inventory error at vendor</td><td>Temporary substitution</td><td><span class="status-pill pill-amber">SAR 1,600</span></td></tr>
+          <tr><td>PO-2025-4348</td><td>Lisinopril 10mg</td><td>Apr 22</td><td>Apr 23</td><td><span class="status-pill pill-amber">1 day</span></td><td>Traffic / logistics</td><td>No impact</td><td><span class="status-pill pill-green">Waived</span></td></tr>
+        </tbody>
+      </table>
+      <div class="insight-box" style="margin-top:14px;border-left-color:#c62828;background:#ffebee"><strong>Recommendation:</strong> Issue formal SLA breach notice to Gulf Medical Supply. If on-time rate does not improve to >92% within 60 days, initiate contract termination and transfer volume to Jamjoom Pharma (96.8% on-time, available capacity confirmed).</div>`
+  },
+
+  'risk-rsd': {
+    title: 'Level 2 → 3 → 4: RSD Non-Compliance Risk — Investigation Trail',
+    html: `
+      <div style="background:#ffebee;border-left:4px solid #c62828;padding:10px 16px;border-radius:6px;margin-bottom:16px;font-size:13px">
+        <strong style="color:#c62828">CRITICAL RISK.</strong> 3.7% RSD failure rate — above 1% threshold. Estimated penalty exposure: SAR 200K–800K if not resolved within 30 days.
+      </div>
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#c62828">3.7%</span><span class="modal-kpi-lbl">Failure Rate</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">1%</span><span class="modal-kpi-lbl">SFDA Threshold</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">21</span><span class="modal-kpi-lbl">Failed Batches</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#c62828">SAR 800K</span><span class="modal-kpi-lbl">Max Penalty Exposure</span></div>
+      </div>
+      <div class="insight-box"><strong>Level 2 — Failure Root Cause Breakdown:</strong> 67% of failures caused by GTIN barcode mismatch between supplier labelling and SFDA registration. This is a supplier quality issue, not a system issue. Supplier audit mandatory.</div>
+      <table class="data-table">
+        <thead><tr><th>Root Cause</th><th>Batch Count</th><th>% of Failures</th><th>Penalty Risk SAR</th><th>Fix Timeline</th><th>→ Level 3 Batches</th></tr></thead>
+        <tbody>
+          <tr onclick="openDrill('failed-batches')"><td><strong>GTIN Barcode Mismatch</strong></td><td>14</td><td>66.7%</td><td><span class="status-pill pill-red">200,000–600,000</span></td><td>24 hrs per batch</td><td style="color:#1565c0;cursor:pointer">View 14 Batches ↗</td></tr>
+          <tr onclick="openDrill('rsd-sync')"><td><strong>Network API Timeout</strong></td><td>5</td><td>23.8%</td><td><span class="status-pill pill-amber">50,000–100,000</span></td><td>Auto-retry (1 hr)</td><td style="color:#1565c0;cursor:pointer">View 5 Batches ↗</td></tr>
+          <tr onclick="openDrill('rsd-sync')"><td><strong>Duplicate Serial Number</strong></td><td>2</td><td>9.5%</td><td><span class="status-pill pill-amber">20,000–40,000</span></td><td>Manual fix (4 hrs)</td><td style="color:#1565c0;cursor:pointer">View 2 Batches ↗</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:12px;font-size:12px;color:#5e6c84;font-style:italic">→ Click any row for Level 3 batch records → then any batch for Level 4 root cause + corrective action plan</div>`
+  },
+
+  'risk-coldchain': {
+    title: 'Level 2 → 3: Cold Chain Risk — Breach Investigation',
+    html: `
+      <div style="background:#fff3e0;border-left:4px solid #e65100;padding:10px 16px;border-radius:6px;margin-bottom:16px;font-size:13px">
+        <strong style="color:#e65100">Active breach — SCH-1851.</strong> Insulin products. 45 minutes at 9.4°C. Backup vehicle ETA 22 minutes. Product assessment required.
+      </div>
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#c62828">9.4°C</span><span class="modal-kpi-lbl">Current Temp</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">8°C max</span><span class="modal-kpi-lbl">Allowed Limit</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">45 mins</span><span class="modal-kpi-lbl">Excursion Duration</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#e65100">SAR 44.9K</span><span class="modal-kpi-lbl">Product Value at Risk</span></div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Time</th><th>Temperature</th><th>Event</th><th>Action Taken</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>07:08</td><td>8.2°C</td><td>First threshold breach detected</td><td>Automatic alert sent to driver + ops team</td><td><span class="status-pill pill-amber">Alert Sent</span></td></tr>
+          <tr><td>07:14</td><td>8.6°C</td><td>Rising temperature confirmed</td><td>Compressor fault diagnosed — Unit 3B</td><td><span class="status-pill pill-amber">Diagnosed</span></td></tr>
+          <tr><td>07:22</td><td>9.1°C</td><td>Backup vehicle dispatched</td><td>VH-2284 dispatched from Riyadh depot</td><td><span class="status-pill pill-amber">In Progress</span></td></tr>
+          <tr><td>07:53 (now)</td><td>9.4°C</td><td>Breach duration: 45 minutes</td><td>Backup vehicle ETA: 22 minutes</td><td><span class="status-pill pill-red">Active</span></td></tr>
+          <tr><td>~08:15 (est)</td><td>Target: &lt;8°C</td><td>Transfer to backup vehicle</td><td>Pending — product assessment on arrival</td><td><span class="status-pill pill-blue">Pending</span></td></tr>
+        </tbody>
+      </table>
+      <div class="insight-box" style="margin-top:14px"><strong>SFDA GDP Rule:</strong> Insulin excursion above 8°C for less than 1 hour total — product MAY still be usable per SFDA GDP guidelines. Pharmacist must assess on arrival. If total excursion exceeds 1 hour, product must be quarantined and SFDA notified within 24 hours. Click L4 (alert-coldchain) for product disposition decision framework.</div>`
+  },
+
+  'risk-stockout': {
+    title: 'Level 2 → 3: Stockout Risk — Patient Safety Analysis',
+    html: `
+      <div style="background:#ffebee;border-left:4px solid #c62828;padding:10px 16px;border-radius:6px;margin-bottom:16px;font-size:13px">
+        <strong style="color:#c62828">PATIENT SAFETY RISK.</strong> Metformin 500mg stockout in approximately 4 hours. 847 active patients on this medication.
+      </div>
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#c62828">12 units</span><span class="modal-kpi-lbl">Stock Remaining</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">48 units/day</span><span class="modal-kpi-lbl">Average Daily Usage</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#c62828">4 hours</span><span class="modal-kpi-lbl">Estimated Time to Stockout</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">847 patients</span><span class="modal-kpi-lbl">At Risk</span></div>
+      </div>
+      <div class="insight-box"><strong>Level 2 — Root Cause:</strong> Reorder point was set at 200 units but a system configuration error disabled the automatic PO trigger. Stock depleted without alert. Contributing factor: near-expiry batch B2025-847 (2,400 units) quarantined due to RSD failure — removing available stock.</div>
+      <table class="data-table">
+        <thead><tr><th>Resolution Option</th><th>Units Available</th><th>ETA</th><th>Cost SAR</th><th>Action Required</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr onclick="openDrill('alert-stockout')"><td><strong>Al-Nakheel Branch Transfer</strong></td><td>240 units</td><td>2 hours</td><td>80 (transport)</td><td>Branch manager approval</td><td><span class="status-pill pill-amber">In Progress</span></td></tr>
+          <tr onclick="openDrill('alert-stockout')"><td><strong>Al-Olaya Branch Transfer</strong></td><td>180 units</td><td>2.5 hours</td><td>80 (transport)</td><td>Branch manager approval</td><td><span class="status-pill pill-amber">In Progress</span></td></tr>
+          <tr onclick="openDrill('alert-stockout')"><td><strong>Emergency PO to GSK</strong></td><td>2,000 units</td><td>6 hours</td><td>14,000</td><td>Procurement director approval</td><td><span class="status-pill pill-red">Not Started</span></td></tr>
+          <tr onclick="openDrill('alert-stockout')"><td><strong>Release Quarantine B2025-847</strong></td><td>2,400 units</td><td>Immediate</td><td>0</td><td>QA Director + SFDA provisional approval</td><td><span class="status-pill pill-red">Escalated</span></td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:12px;font-size:12px;color:#5e6c84;font-style:italic">→ Click any row for Level 3 → Level 4: full procurement authorization trail and patient communication plan</div>`
+  },
+
+  'risk-vendor': {
+    title: 'Level 2 → 3: Vendor SLA Risk — 3 Vendors Below Threshold',
+    html: `
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#c62828">3</span><span class="modal-kpi-lbl">Vendors Below SLA</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">95%</span><span class="modal-kpi-lbl">Contracted SLA Target</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">SAR 1.8M</span><span class="modal-kpi-lbl">Annual Spend at Risk</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val">Q3 2025</span><span class="modal-kpi-lbl">Contract Review Date</span></div>
+      </div>
+      <div class="insight-box"><strong>Level 2 — Vendor Risk Summary:</strong> Al-Dawaa (86.4%), Gulf Medical (84.2%), and Med-Supply KSA (81.6%) are all below the 95% SLA target. Formal breach notices issued to Gulf Medical and Med-Supply. Potential volume reallocation to GSK and Jamjoom saves SAR 180K annually at equivalent quality.</div>
+      <table class="data-table">
+        <thead><tr><th>Vendor</th><th>On-Time %</th><th>SLA Target</th><th>Annual Spend SAR</th><th>Breach Notice</th><th>Recommended Action</th><th>→ L3 Records</th></tr></thead>
+        <tbody>
+          <tr onclick="openDrill('delivery-times')"><td><strong>Al-Dawaa Medical</strong></td><td><span class="status-pill pill-amber">86.4%</span></td><td>95%</td><td>800,000</td><td><span class="status-pill pill-amber">Warning Issued</span></td><td>60-day improvement plan</td><td style="color:#1565c0;cursor:pointer">Late Deliveries ↗</td></tr>
+          <tr onclick="openDrill('delivery-times')"><td><strong>Gulf Medical Supply</strong></td><td><span class="status-pill pill-red">84.2%</span></td><td>95%</td><td>600,000</td><td><span class="status-pill pill-red">Breach Notice Sent</span></td><td>Contract termination if no improvement</td><td style="color:#1565c0;cursor:pointer">Late Deliveries ↗</td></tr>
+          <tr onclick="openDrill('delivery-times')"><td><strong>Med-Supply KSA</strong></td><td><span class="status-pill pill-red">81.6%</span></td><td>95%</td><td>400,000</td><td><span class="status-pill pill-red">Breach Notice Sent</span></td><td>Volume transfer to Jamjoom Pharma</td><td style="color:#1565c0;cursor:pointer">Late Deliveries ↗</td></tr>
+        </tbody>
+      </table>`
+  },
+
+  'risk-expiry': {
+    title: 'Level 2 → 3: Near-Expiry Risk — SAR 124K Exposure Analysis',
+    html: `
+      <div class="modal-kpi-row">
+        <div class="modal-kpi"><span class="modal-kpi-val">247</span><span class="modal-kpi-lbl">SKUs Near Expiry</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#c62828">14</span><span class="modal-kpi-lbl">Expiring within 30 days</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#e65100">SAR 124K</span><span class="modal-kpi-lbl">Write-Off Exposure</span></div>
+        <div class="modal-kpi"><span class="modal-kpi-val" style="color:#2e7d32">↓ 34%</span><span class="modal-kpi-lbl">vs Q1 2025</span></div>
+      </div>
+      <div class="insight-box"><strong>Risk Level: Medium.</strong> Despite 247 near-expiry SKUs, the Domo alert system has reduced Q2 write-offs by 34% vs Q1. Projected write-off SAR 56K vs SAR 188K in Q2 2024. Primary exposure concentrated in Insulin Glargine (SAR 48K) and Atorvastatin (SAR 22.4K).</div>
+      <table class="data-table">
+        <thead><tr><th>Category</th><th>SKUs</th><th>Value at Risk SAR</th><th>Recovery Projected SAR</th><th>Net Exposure SAR</th><th>Trend</th><th>→ L3 Items</th></tr></thead>
+        <tbody>
+          <tr onclick="openDrill('near-expiry')"><td><strong>Critical (< 30 days)</strong></td><td>14</td><td>124,600</td><td>84,240</td><td><span style="color:#c62828;font-weight:700">40,360</span></td><td>↓ Improving</td><td style="color:#1565c0;cursor:pointer">View Items ↗</td></tr>
+          <tr onclick="openDrill('alert-expiry')"><td><strong>Urgent (30–60 days)</strong></td><td>48</td><td>31,640</td><td>26,900</td><td><span style="color:#e65100;font-weight:700">4,740</span></td><td>↓ Improving</td><td style="color:#1565c0;cursor:pointer">View Items ↗</td></tr>
+          <tr onclick="openDrill('antibiotics')"><td><strong>Monitor (60–90 days)</strong></td><td>94</td><td>14,200</td><td>13,490</td><td><span style="color:#f57c00;font-weight:700">710</span></td><td>→ Stable</td><td style="color:#1565c0;cursor:pointer">View Items ↗</td></tr>
+          <tr onclick="openDrill('antibiotics')"><td><strong>Low Risk (> 90 days)</strong></td><td>91</td><td>5,800</td><td>5,800</td><td><span style="color:#2e7d32;font-weight:700">0</span></td><td>→ Stable</td><td style="color:#1565c0;cursor:pointer">View Items ↗</td></tr>
+          <tr style="font-weight:700;background:#f0f4fa"><td><strong>TOTAL</strong></td><td><strong>247</strong></td><td><strong>176,240</strong></td><td><strong>130,430</strong></td><td><strong><span style="color:#c62828">45,810</span></strong></td><td>↓ Improving</td><td>—</td></tr>
+        </tbody>
+      </table>`
+  }
+
+  }); // end second Object.assign(DRILLS)
+
+  // Compliance Trend
+  new Chart(document.getElementById('complianceTrendChart'), {
+    type:'line',
+    data:{
+      labels:months,
+      datasets:[
+        { label:'Compliance Rate', data:[94.2,94.8,95.1,95.6,96.0,96.1,96.4,96.3,97.1,97.4,97.8,98.7],
+          borderColor:'#1565c0', backgroundColor:'rgba(21,101,192,.08)', fill:true, tension:.4, pointRadius:3, pointBackgroundColor:'#1565c0' },
+        { label:'SFDA Minimum (97%)', data:[97,97,97,97,97,97,97,97,97,97,97,97],
+          borderColor:'#c62828', backgroundColor:'transparent', borderDash:[5,4], pointRadius:0 }
+      ]
+    },
+    options:{...defaults, scales:{
+      x:{ grid:{display:false}, ticks:{color:textColor,font:{family:font,size:10}} },
+      y:{ min:93, max:100, grid:{color:gridColor}, ticks:{color:textColor,font:{family:font,size:10}, callback:v=>v+'%'} }
+    }}
+  });
+
+  // Benchmark chart
+  new Chart(document.getElementById('benchmarkChart'), {
+    type:'bar',
+    data:{
+      labels:['Serialization','RSD Sync','Batch Pass Rate','Audit Ready'],
+      datasets:[
+        { label:'Your Org', data:[98.7,96.3,97.9,94.8], backgroundColor:'rgba(21,101,192,.8)', borderRadius:6 },
+        { label:'Industry Avg', data:[91.2,88.4,93.1,82.6], backgroundColor:'rgba(21,101,192,.25)', borderRadius:6 }
+      ]
+    },
+    options:{...defaults, scales:{
+      x:{grid:{display:false},ticks:{color:textColor,font:{family:font,size:10}}},
+      y:{min:75,max:100,grid:{color:gridColor},ticks:{color:textColor,font:{family:font,size:10},callback:v=>v+'%'}}
+    }}
+  });
+
+  // Near Expiry Donut
+  new Chart(document.getElementById('nearExpiryChart'), {
+    type:'doughnut',
+    data:{
+      labels:['< 30 days','30-60 days','60-90 days','> 90 days'],
+      datasets:[{ data:[14,48,94,91],
+        backgroundColor:['#c62828','#e65100','#f57c00','#2e7d32'],
+        borderWidth:0, hoverOffset:6 }]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'62%',
+      plugins:{ legend:{position:'right', labels:{font:{family:font,size:11},color:textColor,boxWidth:10,padding:10}} } }
+  });
+
+  // Stock Status Donut
+  new Chart(document.getElementById('stockStatusChart'), {
+    type:'doughnut',
+    data:{
+      labels:['Adequate','Low Stock','Critical','Overstock'],
+      datasets:[{ data:[1840,284,48,112],
+        backgroundColor:['#2e7d32','#f57c00','#c62828','#6a1b9a'],
+        borderWidth:0, hoverOffset:6 }]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'62%',
+      plugins:{ legend:{position:'right', labels:{font:{family:font,size:11},color:textColor,boxWidth:10,padding:10}} } }
+  });
+
+  // Dispensing Chart
+  new Chart(document.getElementById('dispensingChart'), {
+    type:'bar',
+    data:{
+      labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+      datasets:[
+        { label:'Today', data:[428,486,512,394,558,624,487], backgroundColor:'rgba(21,101,192,.8)', borderRadius:4 },
+        { label:'30-day avg', data:[398,424,448,412,496,580,420], backgroundColor:'rgba(21,101,192,.25)', borderRadius:4 }
+      ]
+    },
+    options:{...defaults}
+  });
+
+  // Vendor Chart
+  new Chart(document.getElementById('vendorChart'), {
+    type:'bar',
+    data:{
+      labels:['GSK','Jamjoom','SPIMACO','Tabuk','Al-Dawaa','Gulf Med','Med-Supply'],
+      datasets:[
+        { label:'On-Time %', data:[98.4,96.8,95.2,93.1,86.4,84.2,81.6],
+          backgroundColor: ctx => ctx.raw >= 95 ? 'rgba(46,125,50,.8)' : ctx.raw >= 90 ? 'rgba(230,81,0,.7)' : 'rgba(198,40,40,.8)',
+          borderRadius:5 }
+      ]
+    },
+    options:{...defaults, indexAxis:'y',
+      plugins:{ legend:{display:false} },
+      scales:{
+        y:{grid:{display:false},ticks:{color:textColor,font:{family:font,size:10}}},
+        x:{min:75,max:100,grid:{color:gridColor},ticks:{color:textColor,font:{family:font,size:10},callback:v=>v+'%'}}
+      }
+    }
+  });
+
+  // Delivery Chart
+  new Chart(document.getElementById('deliveryChart'), {
+    type:'line',
+    data:{
+      labels:months,
+      datasets:[{ label:'Avg Lead Days', data:[3.2,3.0,2.8,2.9,2.7,2.6,2.5,2.6,2.5,2.4,2.4,2.4],
+        borderColor:'#1565c0', backgroundColor:'rgba(21,101,192,.1)', fill:true, tension:.4, pointRadius:3 }]
+    },
+    options:{...defaults, plugins:{legend:{display:false}}}
+  });
+
+  // Savings Chart
+  new Chart(document.getElementById('savingsChart'), {
+    type:'doughnut',
+    data:{
+      labels:['Waste Prevention SAR 1.1M','Procurement SAR 840K','Automation SAR 460K'],
+      datasets:[{ data:[1100,840,460],
+        backgroundColor:['#2e7d32','#006064','#6a1b9a'],
+        borderWidth:0, hoverOffset:8 }]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'55%',
+      plugins:{ legend:{position:'bottom', labels:{font:{family:font,size:11},color:textColor,boxWidth:12,padding:12}} } }
+  });
+
+  // Expiry Loss Chart
+  new Chart(document.getElementById('expiryLossChart'), {
+    type:'bar',
+    data:{
+      labels:months,
+      datasets:[
+        { label:'Expiry Loss (SAR K)', data:[284,312,298,342,268,248,224,198,186,164,148,124],
+          backgroundColor:'rgba(198,40,40,.7)', borderRadius:4 },
+        { label:'Target (SAR 120K)', data:[120,120,120,120,120,120,120,120,120,120,120,120],
+          type:'line', borderColor:'#c62828', borderDash:[4,4], pointRadius:0 }
+      ]
+    },
+    options:{...defaults, scales:{
+      x:{grid:{display:false},ticks:{color:textColor,font:{family:font,size:10}}},
+      y:{grid:{color:gridColor},ticks:{color:textColor,font:{family:font,size:10},callback:v=>'SAR '+v+'K'}}
+    }}
+  });
+
+  // Cost per Rx Chart
+  new Chart(document.getElementById('costPerRxChart'), {
+    type:'line',
+    data:{
+      labels:['Nov','Dec','Jan','Feb','Mar','Apr','May'],
+      datasets:[{ label:'Cost/Rx (SAR)', data:[48.2,47.6,47.1,46.4,45.8,45.2,44.6],
+        borderColor:'#006064', backgroundColor:'rgba(0,96,100,.08)', fill:true, tension:.4, pointRadius:3 }]
+    },
+    options:{...defaults, plugins:{legend:{display:false}}}
+  });
+
+  // Vendor Reliability
+  new Chart(document.getElementById('vendorReliabilityChart'), {
+    type:'radar',
+    data:{
+      labels:['On-Time','Quality','Compliance','Cold Chain','Price','Lead Time'],
+      datasets:[
+        { label:'Your Avg Vendor', data:[94.6,8.5,96.2,87.4,78.4,88.2],
+          backgroundColor:'rgba(21,101,192,.15)', borderColor:'#1565c0', pointBackgroundColor:'#1565c0' },
+        { label:'Best-in-Class', data:[99,9.5,100,98,85,95],
+          backgroundColor:'rgba(46,125,50,.08)', borderColor:'#2e7d32', borderDash:[5,4], pointBackgroundColor:'#2e7d32' }
+      ]
+    },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{labels:{font:{family:font,size:10},color:textColor,boxWidth:10}} },
+      scales:{ r:{ ticks:{backdropColor:'transparent',color:textColor,font:{family:font,size:9}}, grid:{color:gridColor}, angleLines:{color:gridColor} } }
+    }
+  });
+
+  // Risk Trend
+  new Chart(document.getElementById('riskTrendChart'), {
+    type:'line',
+    data:{
+      labels:months,
+      datasets:[{ label:'Risk Score (/10)', data:[8.4,8.2,7.9,7.8,7.6,7.8,7.4,7.2,7.0,6.9,7.1,6.8],
+        borderColor:'#e65100', backgroundColor:'rgba(230,81,0,.08)', fill:true, tension:.4, pointRadius:3 }]
+    },
+    options:{...defaults, plugins:{legend:{display:false}},
+      scales:{
+        x:{grid:{display:false},ticks:{color:textColor,font:{family:font,size:10}}},
+        y:{min:5,max:10,grid:{color:gridColor},ticks:{color:textColor,font:{family:font,size:10},callback:v=>v+'/10'}}
+      }
+    }
+  });
+
+  // Penalty Exposure
+  new Chart(document.getElementById('penaltyChart'), {
+    type:'bar',
+    data:{
+      labels:['RSD Non-Compliance','Cold Chain Breach','Batch Failures','Audit Gaps','Stockout Risk'],
+      datasets:[{ label:'Est. Penalty Risk (SAR K)',
+        data:[800,45,200,120,0],
+        backgroundColor:['rgba(198,40,40,.8)','rgba(230,81,0,.7)','rgba(230,81,0,.6)','rgba(21,101,192,.6)','rgba(106,27,154,.5)'],
+        borderRadius:5 }]
+    },
+    options:{...defaults, indexAxis:'y', plugins:{legend:{display:false}},
+      scales:{
+        y:{grid:{display:false},ticks:{color:textColor,font:{family:font,size:10}}},
+        x:{grid:{color:gridColor},ticks:{color:textColor,font:{family:font,size:10},callback:v=>'SAR '+v+'K'}}
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>
